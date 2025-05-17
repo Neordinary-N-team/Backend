@@ -2,6 +2,7 @@ package neordinary.backend.nteam.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import neordinary.backend.nteam.entity.enums.MealType;
 
 import java.time.LocalDateTime;
 
@@ -24,7 +25,12 @@ public class Diary extends BaseEntity {
     private String ingredients;
 
     @Column(name = "comment")
+    @Setter
     private String comment;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "meal_type")
+    private MealType mealType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
