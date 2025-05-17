@@ -14,7 +14,7 @@ public class PromptTemplate {
             요청 사항:
             - 하루 3끼(아침, 점심, 저녁), 총 6일치 식단을 구성해주세요. 총 18개의 식단을 모두 포함해주세요.
             - meal_time은 BREAKFAST, LUNCH, DINNER 중 하나로 설정해주세요.
-            - day는 MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY 중 하나로 설정해주세요.
+            - day는 MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY 중 하나로 설정해주세요.
             - 난이도는 DIFFICULT, MEDIUM, EASY 중 하나로 설정해주세요.
             - nutrients로 포함 가능한 성분은 다음과 같습니다. 대표 영양소 4개를 선택해 단위 중량과 함께 표기해주세요. : 단백질, 철분, 비타민 C, 엽산 (비타민 B9), 비타민 B12, 칼슘, 비타민 D, 오메가-3 지방산, 아연, 요오드, 비타민 B2, 탄수화물, 비타민 B6, 마그네슘, 나트륨
             - 각 식사는 아래와 같은 JSON 객체 형식으로 제공되어야 합니다. 다른 설명 문장, 주석, 또는 "..." 등의 생략 표현 없이 순수 JSON 배열만 출력해주세요.
@@ -45,7 +45,7 @@ public class PromptTemplate {
             주의사항:
             
             하루 3끼 × 6일 = 18개의 JSON 객체가 반드시 포함되어야 합니다.
-            6일은 월요일부터 토요일까지입니다.
+            6일은 월요일부터 토요일까지입니다. 일요일(SUNDAY)은 절대 포함하지 마세요.
             
             출력 형식은 반드시 JSON 배열입니다. JSON 외의 텍스트는 절대 포함하지 마세요.
             
