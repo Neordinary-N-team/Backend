@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import neordinary.backend.nteam.dto.MemberDto;
+import neordinary.backend.nteam.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import static neordinary.backend.nteam.dto.MemberDto.toUpdatedResponse;
 @Validated
 @Tag(name = "Member API", description = "회원 관련 API")
 public class MemberController {
+    private final MemberService memberService;
 
     @PostMapping
     @Operation(summary = "회원 정보 저장", description = "회원 정보를 저장합니다. ")
@@ -65,11 +67,7 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "회원이 존재하지 않음")
     })
     public ResponseEntity<MemberDto.MemberResponse> upgradeMemberLevel(@PathVariable UUID id) {
-        MemberDto.MemberResponse mockMember = toResponse(new MemberDto.MemberCreateRequest("MockUser", "mock@example.com"), id);
-
-        // 비건 레벨 업그레이드 (필요 시 실제 로직 구현)
-        // mockMember.setMemberLevel(mockMember.getVeganLevel().next());
-
-        return ResponseEntity.ok(mockMember);
+        MemberDto.MemberResponse upgradedMember = memberService.upgradeMemberLevel(id);
+        return ResponseEntity.ok(upgradedMember);
     }
 }

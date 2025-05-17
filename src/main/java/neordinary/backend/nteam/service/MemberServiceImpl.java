@@ -1,6 +1,8 @@
 package neordinary.backend.nteam.service;
 
+import lombok.RequiredArgsConstructor;
 import neordinary.backend.nteam.dto.MemberDto;
+import neordinary.backend.nteam.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -9,7 +11,9 @@ import static neordinary.backend.nteam.dto.MemberDto.toResponse;
 import static neordinary.backend.nteam.dto.MemberDto.toUpdatedResponse;
 
 @Service
+@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
+    private final MemberRepository memberRepository;
 
     @Override
     public MemberDto.MemberResponse createMember(MemberDto.MemberCreateRequest request) {
@@ -33,11 +37,13 @@ public class MemberServiceImpl implements MemberService {
     public MemberDto.MemberResponse upgradeMemberLevel(UUID id) {
         MemberDto.MemberResponse member = toResponse(
                 new MemberDto.MemberCreateRequest("MockUser", "mock@example.com"), id);
+
         Integer currentLevel = member.getMemberLevel();
         if (currentLevel == null) {
             currentLevel = 1;
         }
-        member.setMemberLevel(currentLevel + 1);  // 1씩 증가
+        member.setMemberLevel(currentLevel + 1);
+
         return member;
     }
 }
