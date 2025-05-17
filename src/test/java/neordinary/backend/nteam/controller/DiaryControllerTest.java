@@ -56,8 +56,7 @@ public class DiaryControllerTest {
                 .memberId(memberId)
                 .image("image_data")
                 .ingredients("당근, 양파, 토마토")
-                .satisfiedComment("만족 코멘트")
-                .dissatisfiedComment("불만족 코멘트")
+                .comment("코멘트 내용")
                 .createdAt(LocalDateTime.of(2024, 1, 15, 10, 0))
                 .build());
     }

@@ -17,7 +17,6 @@ public class DiaryResponseDto {
     private UUID memberId;
     private String image;
     private String ingredients;
-    private String satisfiedComment;
-    private String dissatisfiedComment;
+    private String comment;
     private LocalDateTime createdAt;
 } 

@@ -64,8 +64,7 @@ public class DiaryServiceTest {
                 .member(member)
                 .image("image_data")
                 .ingredients("ingredients_data")
-                .satisfiedComment("satisfied_comment")
-                .dissatisfiedComment("dissatisfied_comment")
+                .comment("diary comment")
                 .build());
     }
 

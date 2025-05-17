@@ -51,13 +51,11 @@ public class DietControllerTest {
 
         dietResponseDtoList = new ArrayList<>();
         dietResponseDtoList.add(DietResponseDto.builder()
+                .id(1L)
                 .date(LocalDate.of(2024, 1, 15))
                 .name("퀴노아 샐러드")
                 .mealType(MealType.LUNCH)
                 .image("image_data")
-                .ingredients("퀴노아, 토마토, 오이, 올리브 오일")
-                .receipts("1. 퀴노아를 삶습니다. 2. 채소를 썰어 퀴노아와 함께 담습니다.")
-                .nutrients("단백질: 12g, 탄수화물: 35g, 지방: 15g")
                 .build());
     }
 
@@ -90,58 +88,19 @@ public class DietControllerTest {
     }
 
     @Test
-    @DisplayName("기간 내 식단 조회 성공 테스트")
-    void getDietsByPeriod_Success() throws Exception {
+    @DisplayName("날짜별 식단 조회 성공 테스트")
+    void getDietsByDate_Success() throws Exception {
         // given
-        LocalDate startDate = LocalDate.of(2024, 1, 1);
-        LocalDate endDate = LocalDate.of(2024, 1, 31);
+        LocalDate date = LocalDate.of(2024, 1, 15);
         
-        given(dietService.getDietsByPeriod(memberId, startDate, endDate)).willReturn(dietResponseDtoList);
+        given(dietService.getDietsByDate(memberId, date)).willReturn(dietResponseDtoList);
 
         // when, then
         mockMvc.perform(get("/api/diets")
                 .param("memberId", memberId.toString())
-                .param("startDate", startDate.toString())
-                .param("endDate", endDate.toString()))
+                .param("date", date.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result[0].name").value("퀴노아 샐러드"))
-                .andExpect(jsonPath("$.result[0].mealType").value("LUNCH"))
-                .andExpect(jsonPath("$.result[0].ingredients").value("퀴노아, 토마토, 오이, 올리브 오일"));
-    }
-
-    @Test
-    @DisplayName("시작일이 종료일보다 늦은 경우 예외 발생 테스트")
-    void getDietsByPeriod_StartDateAfterEndDate_ThrowsException() throws Exception {
-        // given
-        LocalDate startDate = LocalDate.of(2024, 2, 1);
-        LocalDate endDate = LocalDate.of(2024, 1, 31);
-        
-        given(dietService.getDietsByPeriod(memberId, startDate, endDate))
-                .willThrow(new DietHandler(ErrorStatus.START_DATE_AFTER_END_DATE));
-
-        // when, then
-        mockMvc.perform(get("/api/diets")
-                .param("memberId", memberId.toString())
-                .param("startDate", startDate.toString())
-                .param("endDate", endDate.toString()))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @DisplayName("조회 기간이 2개월 초과인 경우 예외 발생 테스트")
-    void getDietsByPeriod_PeriodExceeding2Months_ThrowsException() throws Exception {
-        // given
-        LocalDate startDate = LocalDate.of(2024, 1, 1);
-        LocalDate endDate = LocalDate.of(2024, 4, 1);
-        
-        given(dietService.getDietsByPeriod(memberId, startDate, endDate))
-                .willThrow(new DietHandler(ErrorStatus.PERIOD_TOO_LONG));
-
-        // when, then
-        mockMvc.perform(get("/api/diets")
-                .param("memberId", memberId.toString())
-                .param("startDate", startDate.toString())
-                .param("endDate", endDate.toString()))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.result[0].mealType").value("LUNCH"));
     }
 } 
