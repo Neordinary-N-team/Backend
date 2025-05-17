@@ -2,6 +2,7 @@ package neordinary.backend.nteam.global.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import neordinary.backend.nteam.global.apiPayload.code.status.ErrorStatus;
+import neordinary.backend.nteam.global.exception.handler.DiaryHandler;
 import neordinary.backend.nteam.global.exception.handler.DietHandler;
 import neordinary.backend.nteam.global.exception.handler.MemberHandler;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
