@@ -62,11 +62,6 @@ public class MemberController {
         return ApiResponse.onSuccess(response);
     }
 
-    @Operation(summary = "멤버 레벨 업그레이드", description = "diary를 작성할 때마다 회원의 멤버 레벨(온도)을 업그레이드합니다.")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "멤버 레벨 업그레이드 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "회원이 존재하지 않음")
-    })
     @PutMapping("/{id}/member-level/upgrade")
     public ApiResponse<?> upgradeMemberLevel(@PathVariable UUID id) {
         MemberResponseDto upgradedMember = memberService.upgradeMemberLevel(id);

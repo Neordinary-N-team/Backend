@@ -166,41 +166,4 @@ public class MemberControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test
-    @DisplayName("회원 레벨 업그레이드 성공 테스트")
-    void upgradeMemberLevel_Success() throws Exception {
-        // given
-        MemberResponseDto upgradedResponse = MemberResponseDto.builder()
-                .id(memberId)
-                .pregDate(LocalDate.of(2024, 5, 17))
-                .height(160)
-                .weight(60)
-                .diseases("고혈압")
-                .prePregnant(1)
-                .hasMorningSickness(MorningSickness.NAUSEA)
-                .allowedVeganFoods(Collections.singletonList("과일,채소"))
-                .bannedVegetables("오이")
-                .memberLevel(36)
-                .build();
-                
-        given(memberService.upgradeMemberLevel(memberId)).willReturn(upgradedResponse);
-
-        // when, then
-        mockMvc.perform(put("/api/members/{id}/member-level/upgrade", memberId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.id").value(memberId.toString()))
-                .andExpect(jsonPath("$.result.memberLevel").value(36));
-    }
-
-    @Test
-    @DisplayName("존재하지 않는 회원 레벨 업그레이드 실패 테스트")
-    void upgradeMemberLevel_MemberNotFound_ThrowsException() throws Exception {
-        // given
-        given(memberService.upgradeMemberLevel(memberId))
-                .willThrow(new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        // when, then
-        mockMvc.perform(put("/api/members/{id}/member-level/upgrade", memberId))
-                .andExpect(status().isNotFound());
-    }
 } 

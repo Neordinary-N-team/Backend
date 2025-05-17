@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import neordinary.backend.nteam.dto.DietRequestDto;
 import neordinary.backend.nteam.dto.DietResponseDto;
 import neordinary.backend.nteam.entity.enums.MealType;
-import neordinary.backend.nteam.global.apiPayload.code.status.ErrorStatus;
-import neordinary.backend.nteam.global.exception.handler.DietHandler;
 import neordinary.backend.nteam.service.DietService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -54,7 +52,7 @@ public class DietControllerTest {
                 .id(1L)
                 .date(LocalDate.of(2024, 1, 15))
                 .name("퀴노아 샐러드")
-                .mealType(MealType.LUNCH)
+                .mealType(String.valueOf(MealType.LUNCH))
                 .image("image_data")
                 .build());
     }
