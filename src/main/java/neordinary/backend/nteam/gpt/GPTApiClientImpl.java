@@ -87,10 +87,9 @@ public class GPTApiClientImpl implements GPTApiClient {
                 new ChatMessage("user", customPrompt)
         );
 
-        String json = askGPTAndGetResponseJson(messages);
+        String response = askGPTAndGetResponseComment(messages);
 
-
-        return convertJsonToCommentDto(json);
+        return new GPTResponseDiaryCommentDto(response);
     }
 
 
@@ -111,20 +110,6 @@ public class GPTApiClientImpl implements GPTApiClient {
     }
 
     private GPTResponseRecipeDto convertJsonToRecipeDto(String json) {
-        try {
-            // snake_case를 camelCase로 자동 변환
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-
-            // JSON 배열을 List<GPTResponseMealPlanDto>로 변환
-            return objectMapper.readValue(json, new TypeReference<>() {});
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("JSON 변환 실패");
-        }
-    }
-
-    private GPTResponseDiaryCommentDto convertJsonToCommentDto(String json) {
         try {
             // snake_case를 camelCase로 자동 변환
             ObjectMapper objectMapper = new ObjectMapper();
@@ -161,6 +146,33 @@ public class GPTApiClientImpl implements GPTApiClient {
                 String apiResponse = gptResponse.getChoices().get(0).getMessage().getContent();
                 System.out.println(apiResponse);
                 return JsonExtractor.extractJson(apiResponse);
+            }
+        }
+
+        throw new RuntimeException("API 요청 실패");
+    }
+
+    private String askGPTAndGetResponseComment(List<ChatMessage> messages) {
+        // 요청 객체
+        GPTApiRequest request = new GPTApiRequest("gpt-3.5-turbo-1106", messages, 0.7);
+
+        // 헤더
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
+
+        HttpEntity<GPTApiRequest> entity = new HttpEntity<>(request, headers);
+
+        // 요청 전송
+        ResponseEntity<GPTApiResponse> response = restTemplate.postForEntity(
+                apiUrl, entity, GPTApiResponse.class
+        );
+
+        // 응답 추출
+        if (response.getStatusCode() == HttpStatus.OK) {
+            GPTApiResponse gptResponse = response.getBody();
+            if (gptResponse != null && !gptResponse.getChoices().isEmpty()) {
+                return gptResponse.getChoices().get(0).getMessage().getContent();
             }
         }
 
