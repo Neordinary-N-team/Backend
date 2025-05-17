@@ -21,6 +21,7 @@ public class MemberDto {
         private String veganLevel;
         private String vegProteins;
         private String bannedVegetables;
+        private Integer memberLevel;
 
         public MemberCreateRequest(String mockUser, String mail) {
         }
@@ -38,6 +39,7 @@ public class MemberDto {
         private String veganLevel;
         private String vegProteins;
         private String bannedVegetables;
+        private Integer memberLevel;
     }
 
     @Getter
@@ -54,8 +56,17 @@ public class MemberDto {
         private String veganLevel;
         private String vegProteins;
         private String bannedVegetables;
+        private Integer memberLevel;
         private String createdAt;
         private String updatedAt;
+
+        public void setMemberLevel(Integer memberLevel) {
+            this.memberLevel = memberLevel;
+        }
+
+        public Integer getMemberLevel() {
+            return memberLevel;
+        }
     }
 
     public static MemberResponse toResponse(MemberCreateRequest request, UUID id) {
@@ -72,6 +83,7 @@ public class MemberDto {
                 .veganLevel(request.getVeganLevel())
                 .vegProteins(request.getVegProteins())
                 .bannedVegetables(request.getBannedVegetables())
+                .memberLevel(1)
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
@@ -91,6 +103,7 @@ public class MemberDto {
                 .veganLevel(request.getVeganLevel())
                 .vegProteins(request.getVegProteins())
                 .bannedVegetables(request.getBannedVegetables())
+                .memberLevel(request.getMemberLevel())
                 .createdAt(existing.getCreatedAt())
                 .updatedAt(now)
                 .build();

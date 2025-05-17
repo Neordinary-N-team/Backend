@@ -58,17 +58,17 @@ public class MemberController {
         return ResponseEntity.ok(mockMember);
     }
 
-    @PutMapping("/{id}/vegan-level/upgrade")
-    @Operation(summary = "비건 레벨 업그레이드", description = "회원의 비건 레벨을 업그레이드합니다.")
+    @PutMapping("/{id}/member-level/upgrade")
+    @Operation(summary = "멤버 레벨 업그레이드", description = "회원의 멤버 레벨을 업그레이드합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "비건 레벨 업그레이드 성공"),
+            @ApiResponse(responseCode = "200", description = "멤버 레벨 업그레이드 성공"),
             @ApiResponse(responseCode = "404", description = "회원이 존재하지 않음")
     })
-    public ResponseEntity<MemberDto.MemberResponse> upgradeVeganLevel(@PathVariable UUID id) {
+    public ResponseEntity<MemberDto.MemberResponse> upgradeMemberLevel(@PathVariable UUID id) {
         MemberDto.MemberResponse mockMember = toResponse(new MemberDto.MemberCreateRequest("MockUser", "mock@example.com"), id);
 
         // 비건 레벨 업그레이드 (필요 시 실제 로직 구현)
-        // mockMember.setVeganLevel(mockMember.getVeganLevel().next());
+        // mockMember.setMemberLevel(mockMember.getVeganLevel().next());
 
         return ResponseEntity.ok(mockMember);
     }

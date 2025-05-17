@@ -51,4 +51,7 @@ public class Member extends BaseEntity {
 
     @Column(name = "banned_vegetables")
     private String bannedVegetables;
+
+    @Column(name = "member_level")
+    private Integer memberLevel;
 } 
