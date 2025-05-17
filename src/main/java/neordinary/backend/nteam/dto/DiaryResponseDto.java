@@ -14,7 +14,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class DiaryResponseDto {
     private Long id;
-    private UUID memberId;
     private String image;
     private String ingredients;
     private String comment;
