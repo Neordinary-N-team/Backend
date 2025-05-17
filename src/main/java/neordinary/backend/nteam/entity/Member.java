@@ -51,4 +51,12 @@ public class Member extends BaseEntity {
 
     @Column(name = "banned_vegetables")
     private String bannedVegetables;
+
+    public int getPregnancyWeek() {
+        if (pregDate == null) {
+            return 0;
+        }
+        LocalDate today = LocalDate.now();
+        return (int) (today.toEpochDay() - pregDate.toEpochDay()) / 7;
+    }
 } 
