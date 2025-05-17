@@ -1,7 +1,9 @@
 package neordinary.backend.nteam.gpt;
 
+import neordinary.backend.nteam.entity.Diary;
 import neordinary.backend.nteam.entity.Diet;
 import neordinary.backend.nteam.entity.Member;
+import neordinary.backend.nteam.gpt.openai.diary.GPTResponseDiaryCommentDto;
 import neordinary.backend.nteam.gpt.openai.meal_plan.GPTResponseMealPlanDto;
 import neordinary.backend.nteam.gpt.openai.recipe.GPTResponseRecipeDto;
 
@@ -12,4 +14,6 @@ public interface GPTApiClient {
     List<GPTResponseMealPlanDto> generateMealPlan(Member member);
 
     GPTResponseRecipeDto generateRecipe(Member member, Diet diet);
+
+    GPTResponseDiaryCommentDto generateDiaryComment(Diary diary);
 }
