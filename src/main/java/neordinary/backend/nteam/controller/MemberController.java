@@ -1,19 +1,17 @@
 package neordinary.backend.nteam.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import neordinary.backend.nteam.dto.MemberDto;
-import org.springframework.http.ResponseEntity;
+import neordinary.backend.nteam.dto.MemberRequestDto;
+import neordinary.backend.nteam.dto.MemberResponseDto;
+import neordinary.backend.nteam.service.MemberService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import neordinary.backend.nteam.global.apiPayload.ApiResponse;
 
 import java.util.UUID;
-
-import static neordinary.backend.nteam.dto.MemberDto.toResponse;
-import static neordinary.backend.nteam.dto.MemberDto.toUpdatedResponse;
 
 @RestController
 @RequestMapping("/api/members")
@@ -21,55 +19,50 @@ import static neordinary.backend.nteam.dto.MemberDto.toUpdatedResponse;
 @Validated
 @Tag(name = "Member API", description = "회원 관련 API")
 public class MemberController {
+    private final MemberService memberService;
 
-    @PostMapping
-    @Operation(summary = "회원 정보 저장", description = "회원 정보를 저장합니다. ")
+    @Operation(summary = "회원 정보 저장", description = "회원 정보를 저장합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "회원 정보 저장 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "회원 정보 저장 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
-    public ResponseEntity<MemberDto.MemberResponse> createMember(@RequestBody MemberDto.MemberCreateRequest request) {
-        UUID mockId = UUID.randomUUID();
-        MemberDto.MemberResponse response = toResponse(request, mockId);
-        return ResponseEntity.ok(response);
+    @PostMapping("")
+    public ApiResponse<?> createMember(@RequestBody MemberRequestDto request) {
+        MemberResponseDto response = memberService.createMember(request);
+        return ApiResponse.onSuccess(response);
     }
 
-    @PutMapping("/{id}")
     @Operation(summary = "회원 정보 수정", description = "회원 정보를 수정합니다. ")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원 정보 수정 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "404", description = "회원을 찾을 수 없음")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "회원 정보 수정 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "회원을 찾을 수 없음")
     })
-    public ResponseEntity<MemberDto.MemberResponse> updateMember(@PathVariable UUID id, @RequestBody MemberDto.MemberUpdateRequest request) {
-        MemberDto.MemberResponse mockExisting = toResponse(new MemberDto.MemberCreateRequest("MockUser", "mock@example.com"), id);
-        MemberDto.MemberResponse updated = toUpdatedResponse(id, request, mockExisting);
-        return ResponseEntity.ok(updated);
+    @PatchMapping("/{id}")
+    public ApiResponse<?> updateMember(@PathVariable UUID id, @RequestBody MemberRequestDto requestDto) {
+        MemberResponseDto response = memberService.updateMember(id, requestDto);
+        return ApiResponse.onSuccess(response);
     }
 
-    @GetMapping("/{id}")
     @Operation(summary = "회원 조회", description = "회원 정보를 조회합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "회원이 존재하지 않음")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "회원 정보 조회 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "회원이 존재하지 않음")
     })
-    public ResponseEntity<MemberDto.MemberResponse> getMember(@PathVariable UUID id) {
-        MemberDto.MemberResponse mockMember = toResponse(new MemberDto.MemberCreateRequest("MockUser", "mock@example.com"), id);
-        return ResponseEntity.ok(mockMember);
+    @GetMapping("/{id}")
+    public ApiResponse<?> getMember(@PathVariable UUID id) {
+        MemberResponseDto response = memberService.getMember(id);
+        return ApiResponse.onSuccess(response);
     }
 
-    @PutMapping("/{id}/vegan-level/upgrade")
-    @Operation(summary = "비건 레벨 업그레이드", description = "회원의 비건 레벨을 업그레이드합니다.")
+    @Operation(summary = "멤버 레벨 업그레이드", description = "회원의 멤버 레벨을 업그레이드합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "비건 레벨 업그레이드 성공"),
-            @ApiResponse(responseCode = "404", description = "회원이 존재하지 않음")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "멤버 레벨 업그레이드 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "회원이 존재하지 않음")
     })
-    public ResponseEntity<MemberDto.MemberResponse> upgradeVeganLevel(@PathVariable UUID id) {
-        MemberDto.MemberResponse mockMember = toResponse(new MemberDto.MemberCreateRequest("MockUser", "mock@example.com"), id);
-
-        // 비건 레벨 업그레이드 (필요 시 실제 로직 구현)
-        // mockMember.setVeganLevel(mockMember.getVeganLevel().next());
-
-        return ResponseEntity.ok(mockMember);
+    @PutMapping("/{id}/member-level/upgrade")
+    public ApiResponse<?> upgradeMemberLevel(@PathVariable UUID id) {
+        MemberResponseDto upgradedMember = memberService.upgradeMemberLevel(id);
+        return ApiResponse.onSuccess(upgradedMember);
     }
 }
