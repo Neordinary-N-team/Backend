@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import neordinary.backend.nteam.entity.enums.VeganLevel;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -22,7 +22,7 @@ public class Member extends BaseEntity {
     private UUID id;
 
     @Column(name = "preg_date")
-    private LocalDateTime pregDate;
+    private LocalDate pregDate;
 
     @Column(name = "height")
     private Integer height;
