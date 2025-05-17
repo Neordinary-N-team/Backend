@@ -104,9 +104,9 @@ public class DietControllerTest {
                 .param("startDate", startDate.toString())
                 .param("endDate", endDate.toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("퀴노아 샐러드"))
-                .andExpect(jsonPath("$[0].mealType").value("LUNCH"))
-                .andExpect(jsonPath("$[0].ingredients").value("퀴노아, 토마토, 오이, 올리브 오일"));
+                .andExpect(jsonPath("$.result[0].name").value("퀴노아 샐러드"))
+                .andExpect(jsonPath("$.result[0].mealType").value("LUNCH"))
+                .andExpect(jsonPath("$.result[0].ingredients").value("퀴노아, 토마토, 오이, 올리브 오일"));
     }
 
     @Test

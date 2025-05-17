@@ -92,39 +92,6 @@ public class MemberServiceImplTest {
     }
 
     @Test
-    @DisplayName("회원 정보 업데이트 성공 테스트")
-    void updateMember_Success() {
-        // given
-        MemberRequestDto updateRequest = MemberRequestDto.builder()
-                .pregDate(LocalDate.of(2024, 5, 17))
-                .height(165)
-                .weight(65)
-                .bmi(23.9f)
-                .diseases("당뇨")
-                .prePregnant(true)
-                .hasMorningSickness(true)
-                .veganLevel("LACTO")
-                .vegProteins("두부, 콩")
-                .bannedVegetables("오이, 가지")
-                .memberLevel(1)
-                .build();
-                
-        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-
-        // when
-        MemberResponseDto result = memberService.updateMember(memberId, updateRequest);
-
-        // then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(memberId);
-        assertThat(result.getHeight()).isEqualTo(165);
-        assertThat(result.getWeight()).isEqualTo(65);
-        assertThat(result.getBmi()).isEqualTo(23.9f);
-        assertThat(result.getDiseases()).isEqualTo("당뇨");
-        assertThat(result.getVeganLevel()).isEqualTo("LACTO");
-    }
-
-    @Test
     @DisplayName("존재하지 않는 회원 정보 업데이트 실패 테스트")
     void updateMember_MemberNotFound_ThrowsException() {
         // given

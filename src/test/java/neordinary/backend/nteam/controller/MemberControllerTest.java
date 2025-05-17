@@ -91,10 +91,10 @@ public class MemberControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(memberRequestDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(memberId.toString()))
-                .andExpect(jsonPath("$.height").value(160))
-                .andExpect(jsonPath("$.weight").value(60))
-                .andExpect(jsonPath("$.veganLevel").value("OVO"));
+                .andExpect(jsonPath("$.result.id").value(memberId.toString()))
+                .andExpect(jsonPath("$.result.height").value(160))
+                .andExpect(jsonPath("$.result.weight").value(60))
+                .andExpect(jsonPath("$.result.veganLevel").value("OVO"));
     }
 
     @Test
@@ -123,11 +123,11 @@ public class MemberControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(memberRequestDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(memberId.toString()))
-                .andExpect(jsonPath("$.height").value(165))
-                .andExpect(jsonPath("$.weight").value(65))
-                .andExpect(jsonPath("$.diseases").value("당뇨"))
-                .andExpect(jsonPath("$.veganLevel").value("LACTO"));
+                .andExpect(jsonPath("$.result.id").value(memberId.toString()))
+                .andExpect(jsonPath("$.result.height").value(165))
+                .andExpect(jsonPath("$.result.weight").value(65))
+                .andExpect(jsonPath("$.result.diseases").value("당뇨"))
+                .andExpect(jsonPath("$.result.veganLevel").value("LACTO"));
     }
 
     @Test
@@ -153,10 +153,10 @@ public class MemberControllerTest {
         // when, then
         mockMvc.perform(get("/api/members/{id}", memberId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(memberId.toString()))
-                .andExpect(jsonPath("$.height").value(160))
-                .andExpect(jsonPath("$.weight").value(60))
-                .andExpect(jsonPath("$.veganLevel").value("OVO"));
+                .andExpect(jsonPath("$.result.id").value(memberId.toString()))
+                .andExpect(jsonPath("$.result.height").value(160))
+                .andExpect(jsonPath("$.result.weight").value(60))
+                .andExpect(jsonPath("$.result.veganLevel").value("OVO"));
     }
 
     @Test
@@ -194,8 +194,8 @@ public class MemberControllerTest {
         // when, then
         mockMvc.perform(put("/api/members/{id}/member-level/upgrade", memberId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(memberId.toString()))
-                .andExpect(jsonPath("$.memberLevel").value(2));
+                .andExpect(jsonPath("$.result.id").value(memberId.toString()))
+                .andExpect(jsonPath("$.result.memberLevel").value(2));
     }
 
     @Test

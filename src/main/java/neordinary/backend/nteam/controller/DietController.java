@@ -13,6 +13,7 @@ import neordinary.backend.nteam.entity.enums.MealType;
 import neordinary.backend.nteam.global.apiPayload.ApiResponse;
 import neordinary.backend.nteam.service.DietService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,13 +37,13 @@ public class DietController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<?> createDiet(@Valid @RequestBody DietRequestDto requestDto) {
         try {
             if (requestDto.getMemberId() == null) {
                 throw new IllegalArgumentException("회원 ID는 필수 입력 값입니다.");
             }
-            //createMockDiets(LocalDate.parse("2025-05-17"));
-            return ApiResponse.onSuccess(null);
+            return ApiResponse.onCreated(null);
         } catch (IllegalArgumentException ex) {
             return ApiResponse.onFailure("CREATE_DIET_FAILED", ex.getMessage(), null);
         } catch (Exception ex) {
