@@ -62,7 +62,7 @@ public class MemberServiceImpl implements MemberService {
 
         Integer currentLevel = member.getMemberLevel();
         if (currentLevel == null) {
-            currentLevel = 1;
+            currentLevel = 35;
         }
         member.setMemberLevel(currentLevel + 1);
 

@@ -36,10 +36,9 @@ public class GPTApiClientImpl implements GPTApiClient {
         String customPrompt = String.format(PromptTemplate.MEAL_PLAN_TEMPLATE,
                 member.getPregnancyWeek(),
                 member.getHasMorningSickness(),
-                member.getVeganLevel().getKoreanName(),
+                member.getAllowedVeganFoods(),
                 member.getDiseases(),
-                member.getBannedVegetables(),
-                member.getVegProteins()
+                member.getBannedVegetables()
         );
 
         List<ChatMessage> messages = List.of(
@@ -59,7 +58,7 @@ public class GPTApiClientImpl implements GPTApiClient {
                 diet.getName(),
                 member.getPregnancyWeek(),
                 member.getHasMorningSickness(),
-                member.getVeganLevel().getKoreanName(),
+                member.getAllowedVeganFoods(),
                 member.getDiseases(),
                 member.getBannedVegetables(),
                 diet.getIngredients(),

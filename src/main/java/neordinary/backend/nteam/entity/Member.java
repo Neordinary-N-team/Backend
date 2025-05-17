@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import neordinary.backend.nteam.converter.StringListConverter;
 import neordinary.backend.nteam.dto.MemberRequestDto;
-import neordinary.backend.nteam.entity.enums.VeganLevel;
+import neordinary.backend.nteam.entity.enums.MorningSickness;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -31,30 +33,25 @@ public class Member extends BaseEntity {
     @Column(name = "weight")
     private Integer weight;
 
-    @Column(name = "bmi")
-    private Float bmi;
-
     @Column(name = "diseases")
     private String diseases;
 
     @Column(name = "pre_pregnant")
-    private Boolean prePregnant;
-
-    @Column(name = "has_morning_sickness")
-    private Boolean hasMorningSickness;
+    private int prePregnant;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "vegan_level")
-    private VeganLevel veganLevel;
+    @Column(name = "has_morning_sickness")
+    private MorningSickness hasMorningSickness;
 
-    @Column(name = "veg_proteins")
-    private String vegProteins;
+    @Convert(converter = StringListConverter.class)
+    @Column(name = "allowed_vegan_foods")
+    private List<String> allowedVeganFoods;
 
     @Column(name = "banned_vegetables")
     private String bannedVegetables;
 
     @Column(name = "member_level")
-    private Integer memberLevel;
+    private Integer memberLevel = 35;
 
     public void setMemberLevel(Integer memberLevel) {
         this.memberLevel = memberLevel;
@@ -72,12 +69,10 @@ public class Member extends BaseEntity {
         this.pregDate = dto.getPregDate();
         this.height = dto.getHeight();
         this.weight = dto.getWeight();
-        this.bmi = dto.getBmi();
         this.diseases = dto.getDiseases();
         this.prePregnant = dto.getPrePregnant();
         this.hasMorningSickness = dto.getHasMorningSickness();
-        this.veganLevel = VeganLevel.valueOf(dto.getVeganLevel());
-        this.vegProteins = dto.getVegProteins();
+        this.allowedVeganFoods = dto.getAllowedVeganFoods();
         this.bannedVegetables = dto.getBannedVegetables();
         this.memberLevel = dto.getMemberLevel();
     }
