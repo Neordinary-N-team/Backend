@@ -63,7 +63,7 @@ public class DietController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "비건 식단 조회 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
-    @GetMapping
+    @GetMapping("/details")
     public ApiResponse<DietDetailsResponseDto> getDietDetails(
             @RequestParam @NotNull(message = "회원 ID는 필수 입력 값입니다.") UUID memberId,
             @RequestParam @NotNull(message = "식단 ID는 필수 입력 값입니다.") Long dietId

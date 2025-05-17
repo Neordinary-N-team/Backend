@@ -25,6 +25,7 @@ public enum ErrorStatus implements BaseErrorCode {
     PERIOD_TOO_LONG(HttpStatus.BAD_REQUEST, "DIET4002", "기간 설정 기준을 초과하였습니다."),
 
     // 일기 관련 에러
+    START_DATE_AFTER_END_DATE(HttpStatus.BAD_REQUEST, "DIARY4002", "시작일이 종료일보다 늦을 수 없습니다."),
     BAD_IMAGE_FORMAT(HttpStatus.BAD_REQUEST, "DIARY4001", "이미지 파일만 업로드 가능합니다.");
 
 

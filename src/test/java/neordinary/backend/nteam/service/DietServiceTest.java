@@ -40,83 +40,56 @@ public class DietServiceTest {
 
     private Member member;
     private UUID memberId;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDate targetDate;
     private List<Diet> dietList;
 
     @BeforeEach
     void setUp() {
         memberId = UUID.randomUUID();
         member = Member.builder().id(memberId).build();
-        startDate = LocalDate.of(2024, 1, 1);
-        endDate = LocalDate.of(2024, 1, 31);
+        targetDate = LocalDate.of(2024, 1, 15);
 
         dietList = new ArrayList<>();
-        LocalDate dietDate = LocalDate.of(2024, 1, 15);
         
         dietList.add(Diet.builder()
                 .id(1L)
                 .member(member)
-                .date(dietDate)
+                .date(targetDate)
                 .name("퀴노아 샐러드")
                 .mealType(MealType.LUNCH)
                 .image("image_data")
                 .ingredients("퀴노아, 토마토, 오이, 올리브 오일")
-                .receipts("1. 퀴노아를 삶습니다. 2. 채소를 썰어 퀴노아와 함께 담습니다.")
+                .recipe("1. 퀴노아를 삶습니다. 2. 채소를 썰어 퀴노아와 함께 담습니다.")
                 .nutrients("단백질: 12g, 탄수화물: 35g, 지방: 15g")
                 .build());
     }
 
     @Test
-    @DisplayName("기간 내 식단 조회 성공 테스트")
-    void getDietsByPeriod_Success() {
+    @DisplayName("날짜별 식단 조회 성공 테스트")
+    void getDietsByDate_Success() {
         // given
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-        given(dietRepository.findByMemberAndDateBetweenOrderByDateAscMealTypeAsc(member, startDate, endDate))
+        given(dietRepository.findByMemberIdAndDate(memberId, targetDate))
                 .willReturn(dietList);
 
         // when
-        List<DietResponseDto> result = dietService.getDietsByPeriod(memberId, startDate, endDate);
+        List<DietResponseDto> result = dietService.getDietsByDate(memberId, targetDate);
 
         // then
         assertThat(result).isNotNull();
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.get(0).getName()).isEqualTo("퀴노아 샐러드");
-        assertThat(result.get(0).getIngredients()).isEqualTo("퀴노아, 토마토, 오이, 올리브 오일");
-    }
-
-    @Test
-    @DisplayName("시작일이 종료일보다 늦은 경우 예외 발생 테스트")
-    void getDietsByPeriod_StartDateAfterEndDate_ThrowsException() {
-        // given
-        LocalDate invalidStartDate = LocalDate.of(2024, 2, 1);
-
-        // when, then
-        assertThatThrownBy(() -> dietService.getDietsByPeriod(memberId, invalidStartDate, startDate))
-                .isInstanceOf(DietHandler.class)
-                .hasMessageContaining("시작일이 종료일보다 늦을 수 없습니다");
-    }
-
-    @Test
-    @DisplayName("조회 기간이 2개월 초과인 경우 예외 발생 테스트")
-    void getDietsByPeriod_PeriodExceeding2Months_ThrowsException() {
-        // given
-        LocalDate farEndDate = LocalDate.of(2024, 4, 1); // 3개월 차이
-
-        // when, then
-        assertThatThrownBy(() -> dietService.getDietsByPeriod(memberId, startDate, farEndDate))
-                .isInstanceOf(DietHandler.class)
-                .hasMessageContaining("기간 설정 기준을 초과하였습니다");
+        assertThat(result.get(0).getMealType()).isEqualTo(MealType.LUNCH);
     }
 
     @Test
     @DisplayName("존재하지 않는 회원의 식단 조회 실패 테스트")
-    void getDietsByPeriod_MemberNotFound_ThrowsException() {
+    void getDietsByDate_MemberNotFound_ThrowsException() {
         // given
         given(memberRepository.findById(memberId)).willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> dietService.getDietsByPeriod(memberId, startDate, endDate))
+        assertThatThrownBy(() -> dietService.getDietsByDate(memberId, targetDate))
                 .isInstanceOf(MemberHandler.class)
                 .hasMessageContaining("사용자가 없습니다");
     }

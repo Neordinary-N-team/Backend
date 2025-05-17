@@ -65,6 +65,10 @@ public class DietService {
     }
 
     public List<DietResponseDto> getDietsByDate(UUID memberId, LocalDate date) {
+        // 회원 존재 확인
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                
         List<Diet> diets = dietRepository.findByMemberIdAndDate(memberId, date);
         // TODO : get diets 하면 사진 없을 때 사진 생성 필요
 
