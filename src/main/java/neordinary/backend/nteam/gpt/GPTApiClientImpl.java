@@ -159,6 +159,7 @@ public class GPTApiClientImpl implements GPTApiClient {
             GPTApiResponse gptResponse = response.getBody();
             if (gptResponse != null && !gptResponse.getChoices().isEmpty()) {
                 String apiResponse = gptResponse.getChoices().get(0).getMessage().getContent();
+                System.out.println(apiResponse);
                 return JsonExtractor.extractJson(apiResponse);
             }
         }

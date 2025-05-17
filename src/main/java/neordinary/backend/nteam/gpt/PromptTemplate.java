@@ -2,7 +2,7 @@ package neordinary.backend.nteam.gpt;
 
 public class PromptTemplate {
     public static final String MEAL_PLAN_TEMPLATE = """
-            당신은 비건 전문 영양사입니다. 다음 정보를 기반으로 임산부를 위한 7일간의 주간 식단을 JSON 배열 형태로 설계해주세요.
+            당신은 비건 전문 영양사입니다. 다음 정보를 기반으로 임산부를 위한 6일간의 주간 식단을 JSON 배열 형태로 설계해주세요.
             
             정보:
             - 임신 주차: %s주차
@@ -12,7 +12,7 @@ public class PromptTemplate {
             - 알러지 정보: %s
             
             요청 사항:
-            - 하루 3끼(아침, 점심, 저녁), 총 7일치 식단을 구성해주세요. 총 21개의 식단을 모두 포함해주세요.
+            - 하루 3끼(아침, 점심, 저녁), 총 6일치 식단을 구성해주세요. 총 18개의 식단을 모두 포함해주세요.
             - meal_time은 BREAKFAST, LUNCH, DINNER 중 하나로 설정해주세요.
             - day는 MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY 중 하나로 설정해주세요.
             - 난이도는 DIFFICULT, MEDIUM, EASY 중 하나로 설정해주세요.
@@ -44,7 +44,8 @@ public class PromptTemplate {
             ]
             주의사항:
             
-            하루 3끼 × 7일 = 21개의 JSON 객체가 반드시 포함되어야 합니다.
+            하루 3끼 × 6일 = 18개의 JSON 객체가 반드시 포함되어야 합니다.
+            6일은 월요일부터 토요일까지입니다.
             
             출력 형식은 반드시 JSON 배열입니다. JSON 외의 텍스트는 절대 포함하지 마세요.
             
