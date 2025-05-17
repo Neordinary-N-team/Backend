@@ -58,7 +58,7 @@ public class MemberController {
         return ResponseEntity.ok(mockMember);
     }
 
-    @PostMapping("/{id}/vegan-level/upgrade")
+    @PutMapping("/{id}/vegan-level/upgrade")
     @Operation(summary = "비건 레벨 업그레이드", description = "회원의 비건 레벨을 업그레이드합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "비건 레벨 업그레이드 성공"),
