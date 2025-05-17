@@ -20,3 +20,8 @@ logging:
     org.springframework.web: INFO
     org.hibernate: INFO
     org.springframework.security: INFO
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
+    url: https://api.openai.com/v1/chat/completions

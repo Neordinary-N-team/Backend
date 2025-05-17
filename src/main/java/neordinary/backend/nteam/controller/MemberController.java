@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import neordinary.backend.nteam.dto.MemberRequestDto;
 import neordinary.backend.nteam.dto.MemberResponseDto;
 import neordinary.backend.nteam.service.MemberService;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import neordinary.backend.nteam.global.apiPayload.ApiResponse;
@@ -31,7 +32,7 @@ public class MemberController {
     @PostMapping("")
     public ApiResponse<?> createMember(@Valid @RequestBody MemberRequestDto request) {
         MemberResponseDto response = memberService.createMember(request);
-        return ApiResponse.onSuccess(response);
+        return ApiResponse.onCreated(response);
     }
 
     @Operation(summary = "회원 정보 수정", description = "회원 정보를 수정합니다. ")

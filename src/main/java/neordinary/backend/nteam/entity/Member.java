@@ -60,6 +60,14 @@ public class Member extends BaseEntity {
         this.memberLevel = memberLevel;
     }
 
+    public int getPregnancyWeek() {
+        if (pregDate == null) {
+            return 0;
+        }
+        LocalDate today = LocalDate.now();
+        return (int) (today.toEpochDay() - pregDate.toEpochDay()) / 7;
+    }
+
     public void updateFrom(MemberRequestDto dto) {
         this.pregDate = dto.getPregDate();
         this.height = dto.getHeight();
