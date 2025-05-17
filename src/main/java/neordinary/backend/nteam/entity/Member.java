@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import neordinary.backend.nteam.dto.MemberRequestDto;
 import neordinary.backend.nteam.entity.enums.VeganLevel;
 
 import java.time.LocalDate;
@@ -51,4 +52,25 @@ public class Member extends BaseEntity {
 
     @Column(name = "banned_vegetables")
     private String bannedVegetables;
-} 
+
+    @Column(name = "member_level")
+    private Integer memberLevel;
+
+    public void setMemberLevel(Integer memberLevel) {
+        this.memberLevel = memberLevel;
+    }
+
+    public void updateFrom(MemberRequestDto dto) {
+        this.pregDate = dto.getPregDate();
+        this.height = dto.getHeight();
+        this.weight = dto.getWeight();
+        this.bmi = dto.getBmi();
+        this.diseases = dto.getDiseases();
+        this.prePregnant = dto.getPrePregnant();
+        this.hasMorningSickness = dto.getHasMorningSickness();
+        this.veganLevel = VeganLevel.valueOf(dto.getVeganLevel());
+        this.vegProteins = dto.getVegProteins();
+        this.bannedVegetables = dto.getBannedVegetables();
+        this.memberLevel = dto.getMemberLevel();
+    }
+}
