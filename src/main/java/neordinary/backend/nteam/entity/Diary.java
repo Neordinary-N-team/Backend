@@ -26,11 +26,8 @@ public class Diary extends BaseEntity {
     @Column(name = "ingredients")
     private String ingredients;
 
-    @Column(name = "satisfied_comment")
-    private String satisfiedComment;
-
-    @Column(name = "dissatisfied_comment")
-    private String dissatisfiedComment;
+    @Column(name = "comment")
+    private String comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

@@ -7,4 +7,8 @@ import java.util.List;
 @Data
 public class GPTResponseRecipeDto {
     private List<String> instructions;
+
+    public String getInstructions() {
+        return String.join(", ", instructions);
+    }
 }

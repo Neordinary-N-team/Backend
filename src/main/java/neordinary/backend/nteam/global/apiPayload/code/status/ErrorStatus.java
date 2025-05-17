@@ -21,7 +21,7 @@ public enum ErrorStatus implements BaseErrorCode {
     CREATE_MEMBER_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MEMBER5001", "회원 생성에 실패했습니다."),
 
     // 식단 관련 에러
-    START_DATE_AFTER_END_DATE(HttpStatus.BAD_REQUEST, "DIET4001", "시작일이 종료일보다 늦을 수 없습니다."),
+    DIET_NOT_FOUND(HttpStatus.BAD_REQUEST, "DIET4001", "식단이 없습니다."),
     PERIOD_TOO_LONG(HttpStatus.BAD_REQUEST, "DIET4002", "기간 설정 기준을 초과하였습니다."),
 
     // 일기 관련 에러

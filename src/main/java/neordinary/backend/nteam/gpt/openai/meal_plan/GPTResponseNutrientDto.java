@@ -8,4 +8,8 @@ import lombok.ToString;
 public class GPTResponseNutrientDto {
     private String name;
     private String amount;
+
+    public String toDtoString() {
+        return name + " " + amount;
+    }
 }

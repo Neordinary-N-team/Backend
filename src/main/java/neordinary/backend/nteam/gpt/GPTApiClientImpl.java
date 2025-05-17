@@ -3,11 +3,13 @@ package neordinary.backend.nteam.gpt;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import neordinary.backend.nteam.entity.Diary;
 import neordinary.backend.nteam.entity.Diet;
 import neordinary.backend.nteam.entity.Member;
 import neordinary.backend.nteam.gpt.openai.ChatMessage;
 import neordinary.backend.nteam.gpt.openai.GPTApiRequest;
 import neordinary.backend.nteam.gpt.openai.GPTApiResponse;
+import neordinary.backend.nteam.gpt.openai.diary.GPTResponseDiaryCommentDto;
 import neordinary.backend.nteam.gpt.openai.meal_plan.GPTResponseMealPlanDto;
 import neordinary.backend.nteam.gpt.openai.recipe.GPTResponseRecipeDto;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +53,7 @@ public class GPTApiClientImpl implements GPTApiClient {
     }
 
     @Override
-    public List<GPTResponseRecipeDto> generateRecipe(Member member, Diet diet) {
+    public GPTResponseRecipeDto generateRecipe(Member member, Diet diet) {
         // 메시지 구성
         String customPrompt = String.format(PromptTemplate.RECIPE_TEMPLATE,
                 diet.getName(),
@@ -71,13 +73,59 @@ public class GPTApiClientImpl implements GPTApiClient {
 
         String json = askGPTAndGetResponseJson(messages);
 
-        return convertJsonToDto(json);
+        return convertJsonToRecipeDto(json);
+    }
+
+    @Override
+    public GPTResponseDiaryCommentDto generateDiaryComment(Diary diary) {
+        // 메시지 구성
+        String customPrompt = String.format(PromptTemplate.COMMENT_TEMPLATE,
+                diary.getComment()
+        );
+
+        List<ChatMessage> messages = List.of(
+                new ChatMessage("system", "너는 영양사이며, 비건 임산부를 위해 코멘트를 달아주는 역할이야."),
+                new ChatMessage("user", customPrompt)
+        );
+
+        String json = askGPTAndGetResponseJson(messages);
+
+
+        return convertJsonToCommentDto(json);
     }
 
 
     // == GPT 요청을 위한 Method ==
 
-    private <T> List<T> convertJsonToDto(String json) {
+    private List<GPTResponseMealPlanDto> convertJsonToDto(String json) {
+        try {
+            // snake_case를 camelCase로 자동 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+
+            // JSON 배열을 List<GPTResponseMealPlanDto>로 변환
+            return objectMapper.readValue(json, new TypeReference<>() {});
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("JSON 변환 실패");
+        }
+    }
+
+    private GPTResponseRecipeDto convertJsonToRecipeDto(String json) {
+        try {
+            // snake_case를 camelCase로 자동 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+
+            // JSON 배열을 List<GPTResponseMealPlanDto>로 변환
+            return objectMapper.readValue(json, new TypeReference<>() {});
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("JSON 변환 실패");
+        }
+    }
+
+    private GPTResponseDiaryCommentDto convertJsonToCommentDto(String json) {
         try {
             // snake_case를 camelCase로 자동 변환
             ObjectMapper objectMapper = new ObjectMapper();
