@@ -61,10 +61,4 @@ public class MemberController {
         MemberResponseDto response = memberService.getMember(id);
         return ApiResponse.onSuccess(response);
     }
-
-    @PutMapping("/{id}/member-level/upgrade")
-    public ApiResponse<?> upgradeMemberLevel(@PathVariable UUID id) {
-        MemberResponseDto upgradedMember = memberService.upgradeMemberLevel(id);
-        return ApiResponse.onSuccess(upgradedMember);
-    }
 }
