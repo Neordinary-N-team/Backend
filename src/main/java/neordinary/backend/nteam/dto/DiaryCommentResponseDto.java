@@ -7,7 +7,6 @@ import neordinary.backend.nteam.entity.enums.MealType;
 @Getter
 @Builder
 public class DiaryCommentResponseDto {
-    private Long id;
     private MealType mealType;
     private String comment;
 }
