@@ -56,4 +56,7 @@ jobs:
               -e "DB_URL=${{ secrets.DB_URL }}" \
               -e "DB_USERNAME=${{ secrets.DB_USERNAME }}" \
               -e "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+              -e "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" \
+              -e "GOOGLE_CX=${{ secrets.GOOGLE_CX }}" \
+              -e "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" \
               ${{ secrets.DOCKERHUB_USERNAME }}/hackaton:latest
