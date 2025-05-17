@@ -5,8 +5,10 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 public class MemberDto {
+
     @Getter
     public static class MemberCreateRequest {
         private String pregDate;
@@ -19,6 +21,9 @@ public class MemberDto {
         private String veganLevel;
         private String vegProteins;
         private String bannedVegetables;
+
+        public MemberCreateRequest(String mockUser, String mail) {
+        }
     }
 
     @Getter
@@ -38,7 +43,7 @@ public class MemberDto {
     @Getter
     @Builder
     public static class MemberResponse {
-        private Long id;
+        private UUID id;
         private String pregDate;
         private int height;
         private int weight;
@@ -53,7 +58,8 @@ public class MemberDto {
         private String updatedAt;
     }
 
-    public static MemberResponse toResponse(MemberCreateRequest request, long id) {
+    public static MemberResponse toResponse(MemberCreateRequest request, UUID id) {
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         return MemberResponse.builder()
                 .id(id)
                 .pregDate(request.getPregDate())
@@ -66,11 +72,13 @@ public class MemberDto {
                 .veganLevel(request.getVeganLevel())
                 .vegProteins(request.getVegProteins())
                 .bannedVegetables(request.getBannedVegetables())
-                .createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .createdAt(now)
+                .updatedAt(now)
                 .build();
     }
 
-    public static MemberResponse toUpdatedResponse(Long id, MemberUpdateRequest request, MemberResponse existing) {
+    public static MemberResponse toUpdatedResponse(UUID id, MemberUpdateRequest request, MemberResponse existing) {
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         return MemberResponse.builder()
                 .id(id)
                 .pregDate(request.getPregDate())
@@ -84,7 +92,7 @@ public class MemberDto {
                 .vegProteins(request.getVegProteins())
                 .bannedVegetables(request.getBannedVegetables())
                 .createdAt(existing.getCreatedAt())
-                .updatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .updatedAt(now)
                 .build();
     }
 }
