@@ -1,6 +1,5 @@
 package neordinary.backend.nteam.controller;
 
-import lombok.Getter;
 import neordinary.backend.nteam.dto.MemberDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
