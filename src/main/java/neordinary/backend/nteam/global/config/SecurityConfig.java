@@ -1,4 +1,4 @@
-package neordinary.backend.nteam.config;
+package neordinary.backend.nteam.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
