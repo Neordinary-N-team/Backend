@@ -3,7 +3,7 @@ package neordinary.backend.nteam.service;
 import neordinary.backend.nteam.dto.MemberRequestDto;
 import neordinary.backend.nteam.dto.MemberResponseDto;
 import neordinary.backend.nteam.entity.Member;
-import neordinary.backend.nteam.entity.enums.VeganLevel;
+import neordinary.backend.nteam.entity.enums.MorningSickness;
 import neordinary.backend.nteam.global.exception.handler.MemberHandler;
 import neordinary.backend.nteam.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,14 +47,12 @@ public class MemberServiceImplTest {
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
-                .bmi(21.5f)
                 .diseases("고혈압")
-                .prePregnant(true)
-                .hasMorningSickness(false)
-                .veganLevel("OVO")
-                .vegProteins("두부")
+                .prePregnant(1)
+                .hasMorningSickness(MorningSickness.NAUSEA)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
                 .bannedVegetables("오이")
-                .memberLevel(1)
+                .memberLevel(35)
                 .build();
 
         member = Member.builder()
@@ -61,14 +60,12 @@ public class MemberServiceImplTest {
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
-                .bmi(21.5f)
                 .diseases("고혈압")
-                .prePregnant(true)
-                .hasMorningSickness(false)
-                .veganLevel(VeganLevel.OVO)
-                .vegProteins("두부")
+                .prePregnant(1)
+                .hasMorningSickness(MorningSickness.NAUSEA)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
                 .bannedVegetables("오이")
-                .memberLevel(1)
+                .memberLevel(35)
                 .build();
     }
 
@@ -86,8 +83,7 @@ public class MemberServiceImplTest {
         assertThat(result.getId()).isEqualTo(memberId);
         assertThat(result.getHeight()).isEqualTo(160);
         assertThat(result.getWeight()).isEqualTo(60);
-        assertThat(result.getBmi()).isEqualTo(21.5f);
-        assertThat(result.getVeganLevel()).isEqualTo("OVO");
+        assertThat(result.getAllowedVeganFoods()).isEqualTo(Collections.singletonList("과일,채소"));
         verify(memberRepository, times(1)).save(any(Member.class));
     }
 
@@ -98,32 +94,28 @@ public class MemberServiceImplTest {
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
         
         MemberRequestDto updateRequestDto = MemberRequestDto.builder()
-                .pregDate(LocalDate.of(2024, 5, 20))
-                .height(165)
-                .weight(65)
-                .bmi(23.9f)
-                .diseases("당뇨")
-                .prePregnant(false)
-                .hasMorningSickness(true)
-                .veganLevel("LACTO")
-                .vegProteins("콩고기")
-                .bannedVegetables("가지")
-                .memberLevel(2)
+                .pregDate(LocalDate.of(2024, 5, 17))
+                .height(160)
+                .weight(60)
+                .diseases("고혈압")
+                .prePregnant(1)
+                .hasMorningSickness(MorningSickness.NAUSEA)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
+                .bannedVegetables("계란")
+                .memberLevel(35)
                 .build();
                 
         Member updatedMember = Member.builder()
                 .id(memberId)
-                .pregDate(LocalDate.of(2024, 5, 20))
-                .height(165)
-                .weight(65)
-                .bmi(23.9f)
-                .diseases("당뇨")
-                .prePregnant(false)
-                .hasMorningSickness(true)
-                .veganLevel(VeganLevel.LACTO)
-                .vegProteins("콩고기")
-                .bannedVegetables("가지")
-                .memberLevel(2)
+                .pregDate(LocalDate.of(2024, 5, 17))
+                .height(160)
+                .weight(60)
+                .diseases("고혈압")
+                .prePregnant(1)
+                .hasMorningSickness(MorningSickness.NAUSEA)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
+                .bannedVegetables("오이")
+                .memberLevel(36)
                 .build();
                 
         given(memberRepository.save(any(Member.class))).willReturn(updatedMember);
@@ -134,16 +126,14 @@ public class MemberServiceImplTest {
         // then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(memberId);
-        assertThat(result.getHeight()).isEqualTo(165);
-        assertThat(result.getWeight()).isEqualTo(65);
-        assertThat(result.getBmi()).isEqualTo(23.9f);
-        assertThat(result.getDiseases()).isEqualTo("당뇨");
-        assertThat(result.getPrePregnant()).isEqualTo(false);
-        assertThat(result.getHasMorningSickness()).isEqualTo(true);
-        assertThat(result.getVeganLevel()).isEqualTo("LACTO");
-        assertThat(result.getVegProteins()).isEqualTo("콩고기");
-        assertThat(result.getBannedVegetables()).isEqualTo("가지");
-        assertThat(result.getMemberLevel()).isEqualTo(2);
+        assertThat(result.getHeight()).isEqualTo(160);
+        assertThat(result.getWeight()).isEqualTo(60);
+        assertThat(result.getDiseases()).isEqualTo("고혈압");
+        assertThat(result.getPrePregnant()).isEqualTo(1);
+        assertThat(result.getHasMorningSickness()).isEqualTo(MorningSickness.NAUSEA);
+        assertThat(result.getAllowedVeganFoods()).isEqualTo(Collections.singletonList("과일,채소"));
+        assertThat(result.getBannedVegetables()).isEqualTo("오이");
+        assertThat(result.getMemberLevel()).isEqualTo(36);
         verify(memberRepository, times(1)).findById(memberId);
         verify(memberRepository, times(1)).save(any(Member.class));
     }
@@ -172,7 +162,7 @@ public class MemberServiceImplTest {
         // then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(memberId);
-        assertThat(result.getVeganLevel()).isEqualTo("OVO");
+        assertThat(result.getAllowedVeganFoods()).isEqualTo(Collections.singletonList("과일,채소"));
     }
 
     @Test
@@ -192,6 +182,21 @@ public class MemberServiceImplTest {
     void upgradeMemberLevel_Success() {
         // given
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+        
+        Member upgradedMember = Member.builder()
+                .id(memberId)
+                .pregDate(LocalDate.of(2024, 5, 17))
+                .height(160)
+                .weight(60)
+                .diseases("고혈압")
+                .prePregnant(1)
+                .hasMorningSickness(MorningSickness.NAUSEA)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
+                .bannedVegetables("오이")
+                .memberLevel(36)
+                .build();
+                
+        given(memberRepository.save(any(Member.class))).willReturn(upgradedMember);
 
         // when
         MemberResponseDto result = memberService.upgradeMemberLevel(memberId);
@@ -199,7 +204,7 @@ public class MemberServiceImplTest {
         // then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(memberId);
-        assertThat(result.getMemberLevel()).isEqualTo(2);
+        assertThat(result.getMemberLevel()).isEqualTo(36);
     }
 
     @Test
@@ -223,17 +228,26 @@ public class MemberServiceImplTest {
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
-                .bmi(21.5f)
                 .memberLevel(null)
                 .build();
         
         given(memberRepository.findById(memberId)).willReturn(Optional.of(memberWithNullLevel));
+        
+        Member upgradedMember = Member.builder()
+                .id(memberId)
+                .pregDate(LocalDate.of(2024, 5, 17))
+                .height(160)
+                .weight(60)
+                .memberLevel(36)
+                .build();
+                
+        given(memberRepository.save(any(Member.class))).willReturn(upgradedMember);
 
         // when
         MemberResponseDto result = memberService.upgradeMemberLevel(memberId);
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.getMemberLevel()).isEqualTo(2);
+        assertThat(result.getMemberLevel()).isEqualTo(36);
     }
 } 

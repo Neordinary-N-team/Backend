@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import neordinary.backend.nteam.dto.MemberRequestDto;
 import neordinary.backend.nteam.dto.MemberResponseDto;
+import neordinary.backend.nteam.entity.enums.MorningSickness;
 import neordinary.backend.nteam.global.apiPayload.code.status.ErrorStatus;
 import neordinary.backend.nteam.global.exception.handler.MemberHandler;
 import neordinary.backend.nteam.service.MemberService;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -54,14 +56,12 @@ public class MemberControllerTest {
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
-                .bmi(21.5f)
                 .diseases("고혈압")
-                .prePregnant(true)
-                .hasMorningSickness(false)
-                .veganLevel("OVO")
-                .vegProteins("두부")
+                .prePregnant(1)
+                .hasMorningSickness(MorningSickness.NAUSEA)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
                 .bannedVegetables("오이")
-                .memberLevel(1)
+                .memberLevel(35)
                 .build();
                 
         memberResponseDto = MemberResponseDto.builder()
@@ -69,14 +69,12 @@ public class MemberControllerTest {
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
-                .bmi(21.5f)
                 .diseases("고혈압")
-                .prePregnant(true)
-                .hasMorningSickness(false)
-                .veganLevel("OVO")
-                .vegProteins("두부")
+                .prePregnant(1)
+                .hasMorningSickness(MorningSickness.NAUSEA)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
                 .bannedVegetables("오이")
-                .memberLevel(1)
+                .memberLevel(35)
                 .build();
     }
 
@@ -93,8 +91,7 @@ public class MemberControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.result.id").value(memberId.toString()))
                 .andExpect(jsonPath("$.result.height").value(160))
-                .andExpect(jsonPath("$.result.weight").value(60))
-                .andExpect(jsonPath("$.result.veganLevel").value("OVO"));
+                .andExpect(jsonPath("$.result.weight").value(60));
     }
 
     @Test
@@ -104,16 +101,14 @@ public class MemberControllerTest {
         MemberResponseDto updatedResponse = MemberResponseDto.builder()
                 .id(memberId)
                 .pregDate(LocalDate.of(2024, 5, 17))
-                .height(165)
-                .weight(65)
-                .bmi(23.9f)
-                .diseases("당뇨")
-                .prePregnant(true)
-                .hasMorningSickness(true)
-                .veganLevel("LACTO")
-                .vegProteins("두부, 콩")
-                .bannedVegetables("오이, 가지")
-                .memberLevel(1)
+                .height(160)
+                .weight(60)
+                .diseases("고혈압")
+                .prePregnant(1)
+                .hasMorningSickness(MorningSickness.NAUSEA)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
+                .bannedVegetables("오이")
+                .memberLevel(36)
                 .build();
                 
         given(memberService.updateMember(any(UUID.class), any(MemberRequestDto.class))).willReturn(updatedResponse);
@@ -124,10 +119,11 @@ public class MemberControllerTest {
                 .content(objectMapper.writeValueAsString(memberRequestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.id").value(memberId.toString()))
-                .andExpect(jsonPath("$.result.height").value(165))
-                .andExpect(jsonPath("$.result.weight").value(65))
-                .andExpect(jsonPath("$.result.diseases").value("당뇨"))
-                .andExpect(jsonPath("$.result.veganLevel").value("LACTO"));
+                .andExpect(jsonPath("$.result.height").value(160))
+                .andExpect(jsonPath("$.result.weight").value(60))
+                .andExpect(jsonPath("$.result.diseases").value("고혈압"))
+                .andExpect(jsonPath("$.result.allowedVeganFoods[0]").value("과일,채소"));
+
     }
 
     @Test
@@ -156,7 +152,7 @@ public class MemberControllerTest {
                 .andExpect(jsonPath("$.result.id").value(memberId.toString()))
                 .andExpect(jsonPath("$.result.height").value(160))
                 .andExpect(jsonPath("$.result.weight").value(60))
-                .andExpect(jsonPath("$.result.veganLevel").value("OVO"));
+                .andExpect(jsonPath("$.result.allowedVeganFoods[0]").value("과일,채소"));
     }
 
     @Test
@@ -179,14 +175,12 @@ public class MemberControllerTest {
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
-                .bmi(21.5f)
                 .diseases("고혈압")
-                .prePregnant(true)
-                .hasMorningSickness(false)
-                .veganLevel("OVO")
-                .vegProteins("두부")
+                .prePregnant(1)
+                .hasMorningSickness(MorningSickness.NAUSEA)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
                 .bannedVegetables("오이")
-                .memberLevel(2) // Upgraded level
+                .memberLevel(36)
                 .build();
                 
         given(memberService.upgradeMemberLevel(memberId)).willReturn(upgradedResponse);
@@ -195,7 +189,7 @@ public class MemberControllerTest {
         mockMvc.perform(put("/api/members/{id}/member-level/upgrade", memberId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.id").value(memberId.toString()))
-                .andExpect(jsonPath("$.result.memberLevel").value(2));
+                .andExpect(jsonPath("$.result.memberLevel").value(36));
     }
 
     @Test

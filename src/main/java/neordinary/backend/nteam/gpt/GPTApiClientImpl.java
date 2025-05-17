@@ -14,12 +14,12 @@ import neordinary.backend.nteam.gpt.openai.meal_plan.GPTResponseMealPlanDto;
 import neordinary.backend.nteam.gpt.openai.recipe.GPTResponseRecipeDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-@Service
+@Component
 public class GPTApiClientImpl implements GPTApiClient {
 
     @Value("${openai.api.key}")
@@ -36,10 +36,9 @@ public class GPTApiClientImpl implements GPTApiClient {
         String customPrompt = String.format(PromptTemplate.MEAL_PLAN_TEMPLATE,
                 member.getPregnancyWeek(),
                 member.getHasMorningSickness(),
-                member.getVeganLevel().getKoreanName(),
+                member.getAllowedVeganFoods(),
                 member.getDiseases(),
-                member.getBannedVegetables(),
-                member.getVegProteins()
+                member.getBannedVegetables()
         );
 
         List<ChatMessage> messages = List.of(
@@ -59,7 +58,7 @@ public class GPTApiClientImpl implements GPTApiClient {
                 diet.getName(),
                 member.getPregnancyWeek(),
                 member.getHasMorningSickness(),
-                member.getVeganLevel().getKoreanName(),
+                member.getAllowedVeganFoods(),
                 member.getDiseases(),
                 member.getBannedVegetables(),
                 diet.getIngredients(),
