@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -42,9 +43,12 @@ public class DietService {
 
         List<GPTResponseMealPlanDto> gptResponseMealPlanDtos = gptApiClient.generateMealPlan(member);
 
-        List<Diet> diets = gptResponseMealPlanDtos.stream()
-                .map(GPTResponseMealPlanDto::toEntity)
-                .toList();
+        List<Diet> diets = new ArrayList<>();
+        for (GPTResponseMealPlanDto gptResponseMealPlanDto : gptResponseMealPlanDtos) {
+            Diet entity = gptResponseMealPlanDto.toEntity();
+            entity.setMember(member);
+            diets.add(entity);
+        }
 
         dietRepository.saveAll(diets);
 

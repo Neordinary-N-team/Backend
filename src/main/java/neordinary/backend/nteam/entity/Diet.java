@@ -52,6 +52,7 @@ public class Diet extends BaseEntity {
     @Column(name = "difficulty")
     private DietDifficulty difficulty;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
