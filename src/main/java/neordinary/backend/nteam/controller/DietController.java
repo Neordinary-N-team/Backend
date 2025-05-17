@@ -12,6 +12,7 @@ import neordinary.backend.nteam.dto.DietRequestDto;
 import neordinary.backend.nteam.dto.DietResponseDto;
 import neordinary.backend.nteam.entity.Diet;
 import neordinary.backend.nteam.entity.enums.MealType;
+import neordinary.backend.nteam.service.DietService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 @Tag(name = "Diet API", description = "비건 식단 관련 API")
 public class DietController {
     private static final int MAX_PERIOD_MONTHS = 2;
+    private final DietService dietService;
     
     @PostMapping
     @Operation(summary = "비건 식단 생성", description = "비건 식단을 생성합니다. LLM이 자동으로 처리합니다.")
@@ -64,30 +66,7 @@ public class DietController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원 ID는 필수 입력 값입니다.");
         }
         
-        if (startDate.isAfter(endDate)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "시작일이 종료일보다 늦을 수 없습니다.");
-        }
-        
-        long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-        long monthsBetween = Period.between(startDate, endDate).toTotalMonths();
-        
-        if (monthsBetween > MAX_PERIOD_MONTHS) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "최대 " + MAX_PERIOD_MONTHS + "개월까지만 조회 가능합니다.");
-        }
-        
-        List<Diet> mockDiets = new ArrayList<>();
-        
-        LocalDate currentDate = startDate;
-        while (!currentDate.isAfter(endDate)) {
-            mockDiets.addAll(createMockDiets(currentDate));
-            currentDate = currentDate.plusDays(1);
-        }
-        
-        List<DietResponseDto> responseDtos = mockDiets.stream()
-                .map(DietResponseDto::fromEntity)
-                .sorted(Comparator.comparing(DietResponseDto::getDate)
-                        .thenComparing(DietResponseDto::getMealType))
-                .collect(Collectors.toList());
+        List<DietResponseDto> responseDtos = dietService.getDietsByPeriod(memberId, startDate, endDate);
         
         return ResponseEntity.ok(responseDtos);
     }
