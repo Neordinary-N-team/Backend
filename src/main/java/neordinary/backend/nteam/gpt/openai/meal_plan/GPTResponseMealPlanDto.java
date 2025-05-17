@@ -1,4 +1,4 @@
-package neordinary.backend.nteam.gpt.openai;
+package neordinary.backend.nteam.gpt.openai.meal_plan;
 
 
 import lombok.Data;
