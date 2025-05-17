@@ -2,7 +2,7 @@ package neordinary.backend.nteam.repository;
 
 import neordinary.backend.nteam.config.TestConfig;
 import neordinary.backend.nteam.entity.Member;
-import neordinary.backend.nteam.entity.enums.VeganLevel;
+import neordinary.backend.nteam.entity.enums.MorningSickness;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,14 +34,12 @@ class MemberRepositoryTest {
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
-                .bmi(21.5f)
                 .diseases("고혈압")
-                .prePregnant(true)
-                .hasMorningSickness(false)
-                .veganLevel(VeganLevel.OVO)
-                .vegProteins("두부")
+                .prePregnant(1)
+                .hasMorningSickness(MorningSickness.NAUSEA)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
                 .bannedVegetables("오이")
-                .memberLevel(1)
+                .memberLevel(35)
                 .build();
 
         // when
@@ -50,7 +49,7 @@ class MemberRepositoryTest {
         assertThat(savedMember.getId()).isNotNull();
         assertThat(savedMember.getHeight()).isEqualTo(160);
         assertThat(savedMember.getWeight()).isEqualTo(60);
-        assertThat(savedMember.getVeganLevel()).isEqualTo(VeganLevel.OVO);
+        assertThat(savedMember.getHasMorningSickness()).isEqualTo(MorningSickness.NAUSEA);
     }
 
     @Test
@@ -61,8 +60,7 @@ class MemberRepositoryTest {
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
-                .bmi(21.5f)
-                .veganLevel(VeganLevel.OVO)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
                 .memberLevel(1)
                 .build();
                 
@@ -122,14 +120,14 @@ class MemberRepositoryTest {
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
-                .veganLevel(VeganLevel.OVO)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
                 .build();
                 
         Member member2 = Member.builder()
                 .pregDate(LocalDate.of(2024, 6, 15))
                 .height(165)
                 .weight(65)
-                .veganLevel(VeganLevel.LACTO)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
                 .build();
                 
         memberRepository.save(member1);
