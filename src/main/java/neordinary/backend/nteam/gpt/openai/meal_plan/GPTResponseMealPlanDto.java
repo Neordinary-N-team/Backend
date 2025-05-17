@@ -12,6 +12,7 @@ public class GPTResponseMealPlanDto {
     private String day;
     private String mealTime;
     private String mealName;
+    private String difficulty;
     private List<GPTResponseIngredientDto> ingredients;
     private List<GPTResponseNutrientDto> nutrients;
     private int calories;

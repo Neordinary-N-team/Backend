@@ -14,6 +14,7 @@ public class PromptTemplate {
             
             요청 사항:
             - 하루 3끼(아침, 점심, 저녁), 총 7일치 식단을 구성해주세요. 총 21개의 식단을 모두 포함해주세요.
+            - 난이도는 difficult, medium, easy 중 하나로 설정해주세요.
             - nutrients로 포함 가능한 성분은 다음과 같습니다. 대표 영양소 4개를 선택해 단위 중량과 함께 표기해주세요. : 단백질, 철분, 비타민 C, 엽산 (비타민 B9), 비타민 B12, 칼슘, 비타민 D, 오메가-3 지방산, 아연, 요오드, 비타민 B2, 탄수화물, 비타민 B6, 마그네슘, 나트륨
             - 각 식사는 아래와 같은 JSON 객체 형식으로 제공되어야 합니다. 다른 설명 문장, 주석, 또는 "..." 등의 생략 표현 없이 순수 JSON 배열만 출력해주세요.
             
@@ -24,6 +25,7 @@ public class PromptTemplate {
                 "day": "월요일",
                 "meal_time": "아침",
                 "meal_name": "철분 강화 두부 스크램블",
+                "difficulty": "easy",
                 "ingredients": [
                   {"name": "두부", "alternative": "병아리콩"},
                   {"name": "시금치", "alternative": "케일"},

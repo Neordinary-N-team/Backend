@@ -71,8 +71,6 @@ public class GPTApiClientImpl implements GPTApiClient {
 
         String json = askGPTAndGetResponseJson(messages);
 
-        System.out.println(json);
-
         return convertJsonToDto(json);
     }
 
