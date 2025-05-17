@@ -19,7 +19,8 @@ public class DietResponseDto {
     private Long id;
     private LocalDate date;
     private String name;
-    private MealType mealType;
+    private String mealType;
+    private String time;
     
     @Schema(description = "Base64로 인코딩된 이미지 데이터", example = "data:image/jpeg;base64,/9j/4AAQSkZ...")
     private String image;
@@ -27,15 +28,24 @@ public class DietResponseDto {
     private int calories;
     private DietDifficulty difficulty;
 
+    private static String convertMealTypeToKorean(MealType mealType) {
+        return switch (mealType) {
+            case BREAKFAST -> "아침";
+            case LUNCH -> "점심";
+            case DINNER -> "저녁";
+        };
+    }
+
     public static DietResponseDto fromEntity(Diet diet) {
         return DietResponseDto.builder()
                 .id(diet.getId())
                 .date(diet.getDate())
                 .name(diet.getName())
-                .mealType(diet.getMealType())
+                .mealType(convertMealTypeToKorean(diet.getMealType()))
                 .image(diet.getImage())
                 .calories(diet.getCalories())
                 .difficulty(diet.getDifficulty())
+                .time("10분")
                 .build();
     }
 } 
