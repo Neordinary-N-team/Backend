@@ -43,6 +43,10 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            if [ -z "${{ secrets.DB_URL }}" ] || [ -z "${{ secrets.DB_USERNAME }}" ] || [ -z "${{ secrets.DB_PASSWORD }}" ]; then
+              echo "Error: One or more required environment variables (DB_URL, DB_USERNAME, DB_PASSWORD) are missing."
+              exit 1
+            fi
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/hackaton:latest
             docker stop hack-backend || true
             docker rm hack-backend || true
