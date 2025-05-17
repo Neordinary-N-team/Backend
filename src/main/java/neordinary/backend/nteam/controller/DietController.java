@@ -37,17 +37,9 @@ public class DietController {
     })
     @PostMapping
     public ApiResponse<?> createDiet(@Valid @RequestBody DietRequestDto requestDto) {
-        try {
-            if (requestDto.getMemberId() == null) {
-                throw new IllegalArgumentException("회원 ID는 필수 입력 값입니다.");
-            }
-            //createMockDiets(LocalDate.parse("2025-05-17"));
-            return ApiResponse.onSuccess(null);
-        } catch (IllegalArgumentException ex) {
-            return ApiResponse.onFailure("CREATE_DIET_FAILED", ex.getMessage(), null);
-        } catch (Exception ex) {
-            return ApiResponse.onFailure("INTERNAL_ERROR", "서버 내부 오류가 발생했습니다.", null);
-        }
+        UUID memberId = dietService.createDiet(requestDto.getMemberId());
+
+        return ApiResponse.onSuccess(memberId);
     }
 
     @Operation(summary = "기간별 비건 식단 조회", description = "지정된 기간 내의 모든 비건 식단을 조회합니다. 이미지는 Base64 인코딩 형식입니다. 최대 2개월까지 조회 가능합니다.")

@@ -7,6 +7,8 @@ import neordinary.backend.nteam.entity.Member;
 import neordinary.backend.nteam.global.apiPayload.code.status.ErrorStatus;
 import neordinary.backend.nteam.global.exception.handler.DietHandler;
 import neordinary.backend.nteam.global.exception.handler.MemberHandler;
+import neordinary.backend.nteam.gpt.GPTApiClient;
+import neordinary.backend.nteam.gpt.openai.meal_plan.GPTResponseMealPlanDto;
 import neordinary.backend.nteam.repository.DietRepository;
 import neordinary.backend.nteam.repository.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class DietService {
     
     private final DietRepository dietRepository;
     private final MemberRepository memberRepository;
+    private final GPTApiClient gptApiClient;
 
     public List<DietResponseDto> getDietsByPeriod(UUID memberId, LocalDate startDate, LocalDate endDate) {
         if (startDate.isAfter(endDate)) {
@@ -47,4 +50,23 @@ public class DietService {
                 .map(DietResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public UUID createDiet(UUID memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<GPTResponseMealPlanDto> gptResponseMealPlanDtos = gptApiClient.generateMealPlan(member);
+
+        List<Diet> diets = gptResponseMealPlanDtos.stream()
+                .map(GPTResponseMealPlanDto::toEntity)
+                .toList();
+
+        dietRepository.saveAll(diets);
+
+        return memberId;
+    }
+
+    // TODO : get diets 하면 사진 없을 때 사진 생성 필요
+    // TODO : get recipe 하면 레시피 없을 때 레시피 생성 필요
 } 

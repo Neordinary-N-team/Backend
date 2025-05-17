@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import neordinary.backend.nteam.entity.enums.DietDifficulty;
 import neordinary.backend.nteam.entity.enums.MealType;
 
 import java.time.LocalDate;
@@ -44,6 +45,13 @@ public class Diet extends BaseEntity {
 
     @Column(name = "nutrients")
     private String nutrients;
+
+    @Column(name = "calories")
+    private int calories;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "difficulty")
+    private DietDifficulty difficulty;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

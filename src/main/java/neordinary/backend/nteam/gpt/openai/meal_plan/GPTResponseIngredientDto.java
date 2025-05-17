@@ -8,4 +8,8 @@ import lombok.ToString;
 public class GPTResponseIngredientDto {
     private String name;
     private String alternative;
+
+    public String toDtoString() {
+        return name + " (alternative ingredient) " + alternative;
+    }
 }
