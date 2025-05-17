@@ -35,7 +35,7 @@ public class MemberRequestDto {
     @Size(max = 50, message = "diseases는 최대 50자까지 입력 가능합니다.")
     private String diseases;
 
-    @Schema(example = "true")
+    @Schema(example = "1")
     @NotNull(message = "prePregnant는 필수입니다.")
     private int prePregnant;
 
@@ -43,7 +43,7 @@ public class MemberRequestDto {
     @NotNull(message = "hasMorningSickness는 필수입니다.")
     private MorningSickness hasMorningSickness;
 
-    @Schema(example = "과일,채소")
+    @Schema(example = "[\"과일\", \"채소\"]")
     private List<String> allowedVeganFoods;
 
     @Schema(example = "오이")
