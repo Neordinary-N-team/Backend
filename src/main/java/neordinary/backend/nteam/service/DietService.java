@@ -1,6 +1,7 @@
 package neordinary.backend.nteam.service;
 
 import lombok.RequiredArgsConstructor;
+import neordinary.backend.nteam.dto.DietDetailsResponseDto;
 import neordinary.backend.nteam.dto.DietResponseDto;
 import neordinary.backend.nteam.entity.Diet;
 import neordinary.backend.nteam.entity.Member;
@@ -31,29 +32,9 @@ public class DietService {
     private final MemberRepository memberRepository;
     private final GPTApiClient gptApiClient;
 
-    public List<DietResponseDto> getDietsByPeriod(UUID memberId, LocalDate startDate, LocalDate endDate) {
-        if (startDate.isAfter(endDate)) {
-            throw new DietHandler(ErrorStatus.START_DATE_AFTER_END_DATE);
-        }
-
-        long monthsBetween = Period.between(startDate, endDate).toTotalMonths();
-        if (monthsBetween > MAX_PERIOD_MONTHS) {
-            throw new DietHandler(ErrorStatus.PERIOD_TOO_LONG);
-        }
-
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-
-        List<Diet> diets = dietRepository.findByMemberAndDateBetweenOrderByDateAscMealTypeAsc(member, startDate, endDate);
-
-        return diets.stream()
-                .map(DietResponseDto::fromEntity)
-                .collect(Collectors.toList());
-    }
-
     @Transactional
     public UUID createDiet(UUID memberId) {
+        // TODO : 일기 반영 필요
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -83,6 +64,22 @@ public class DietService {
         }
     }
 
-    // TODO : get diets 하면 사진 없을 때 사진 생성 필요
-    // TODO : get recipe 하면 레시피 없을 때 레시피 생성 필요
-} 
+    public List<DietResponseDto> getDietsByDate(UUID memberId, LocalDate date) {
+        List<Diet> diets = dietRepository.findByMemberIdAndDate(memberId, date);
+        // TODO : get diets 하면 사진 없을 때 사진 생성 필요
+
+        return diets.stream()
+                .map(DietResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public DietDetailsResponseDto getDietsDetails(Long dietId) {
+        Diet diet = dietRepository.findById(dietId)
+                .orElseThrow(() -> new DietHandler(ErrorStatus.DIET_NOT_FOUND));
+        // TODO : get recipe 하면 레시피 없을 때 레시피 생성 필요
+
+        return DietDetailsResponseDto.fromEntity(diet);
+    }
+
+
+}

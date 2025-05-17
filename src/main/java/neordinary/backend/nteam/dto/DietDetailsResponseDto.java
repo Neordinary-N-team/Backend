@@ -15,23 +15,27 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DietResponseDto {
+public class DietDetailsResponseDto {
     private Long id;
-    private LocalDate date;
     private String name;
+    private String nutrients;
+    private String receipts;
+    private String ingredients;
     private MealType mealType;
-    
+
     @Schema(description = "Base64로 인코딩된 이미지 데이터", example = "data:image/jpeg;base64,/9j/4AAQSkZ...")
     private String image;
 
     private int calories;
     private DietDifficulty difficulty;
 
-    public static DietResponseDto fromEntity(Diet diet) {
-        return DietResponseDto.builder()
+    public static DietDetailsResponseDto fromEntity(Diet diet) {
+        return DietDetailsResponseDto.builder()
                 .id(diet.getId())
-                .date(diet.getDate())
                 .name(diet.getName())
+                .nutrients(diet.getNutrients())
+                .receipts(diet.getReceipts())
+                .ingredients(diet.getIngredients())
                 .mealType(diet.getMealType())
                 .image(diet.getImage())
                 .calories(diet.getCalories())

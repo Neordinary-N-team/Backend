@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import neordinary.backend.nteam.dto.DietDetailsResponseDto;
 import neordinary.backend.nteam.dto.DietRequestDto;
 import neordinary.backend.nteam.dto.DietResponseDto;
 import neordinary.backend.nteam.entity.Diet;
@@ -42,7 +43,7 @@ public class DietController {
         return ApiResponse.onSuccess(memberId);
     }
 
-    @Operation(summary = "기간별 비건 식단 조회", description = "지정된 기간 내의 모든 비건 식단을 조회합니다. 이미지는 Base64 인코딩 형식입니다. 최대 2개월까지 조회 가능합니다.")
+    @Operation(summary = "날짜 기준 비건 식단 조회", description = "지정된 날짜의 모든 비건 식단을 조회합니다. 이미지는 Base64 인코딩 형식입니다. 아침, 점심, 저녁의 식단 정보를 반환합니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "비건 식단 조회 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
@@ -50,11 +51,23 @@ public class DietController {
     @GetMapping
     public ApiResponse<List<DietResponseDto>> getDietsByPeriod(
             @RequestParam @NotNull(message = "회원 ID는 필수 입력 값입니다.") UUID memberId,
-            @RequestParam @NotNull(message = "시작일은 필수 입력 값입니다.") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @NotNull(message = "종료일은 필수 입력 값입니다.") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+            @RequestParam @NotNull(message = "날짜는 필수 입력 값입니다.") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
-        List<DietResponseDto> responseDtos = dietService.getDietsByPeriod(memberId, startDate, endDate);
+        List<DietResponseDto> responseDtos = dietService.getDietsByDate(memberId, date);
         return ApiResponse.onSuccess(responseDtos);
+    }
+
+    @Operation(summary = "비건 식단 상세 조회", description = "지정된 식단의 상세 정보를 반환합니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "비건 식단 조회 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @GetMapping
+    public ApiResponse<DietDetailsResponseDto> getDietDetails(
+            @RequestParam @NotNull(message = "회원 ID는 필수 입력 값입니다.") Long dietId
+    ) {
+        DietDetailsResponseDto dietsDetails = dietService.getDietsDetails(dietId);
+        return ApiResponse.onSuccess(dietsDetails);
     }
     
     private List<Diet> createMockDiets(LocalDate date) {
