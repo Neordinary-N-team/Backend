@@ -92,6 +92,63 @@ public class MemberServiceImplTest {
     }
 
     @Test
+    @DisplayName("회원 정보 업데이트 성공 테스트")
+    void updateMember_Success() {
+        // given
+        given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+        
+        MemberRequestDto updateRequestDto = MemberRequestDto.builder()
+                .pregDate(LocalDate.of(2024, 5, 20))
+                .height(165)
+                .weight(65)
+                .bmi(23.9f)
+                .diseases("당뇨")
+                .prePregnant(false)
+                .hasMorningSickness(true)
+                .veganLevel("LACTO")
+                .vegProteins("콩고기")
+                .bannedVegetables("가지")
+                .memberLevel(2)
+                .build();
+                
+        Member updatedMember = Member.builder()
+                .id(memberId)
+                .pregDate(LocalDate.of(2024, 5, 20))
+                .height(165)
+                .weight(65)
+                .bmi(23.9f)
+                .diseases("당뇨")
+                .prePregnant(false)
+                .hasMorningSickness(true)
+                .veganLevel(VeganLevel.LACTO)
+                .vegProteins("콩고기")
+                .bannedVegetables("가지")
+                .memberLevel(2)
+                .build();
+                
+        given(memberRepository.save(any(Member.class))).willReturn(updatedMember);
+
+        // when
+        MemberResponseDto result = memberService.updateMember(memberId, updateRequestDto);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(memberId);
+        assertThat(result.getHeight()).isEqualTo(165);
+        assertThat(result.getWeight()).isEqualTo(65);
+        assertThat(result.getBmi()).isEqualTo(23.9f);
+        assertThat(result.getDiseases()).isEqualTo("당뇨");
+        assertThat(result.getPrePregnant()).isEqualTo(false);
+        assertThat(result.getHasMorningSickness()).isEqualTo(true);
+        assertThat(result.getVeganLevel()).isEqualTo("LACTO");
+        assertThat(result.getVegProteins()).isEqualTo("콩고기");
+        assertThat(result.getBannedVegetables()).isEqualTo("가지");
+        assertThat(result.getMemberLevel()).isEqualTo(2);
+        verify(memberRepository, times(1)).findById(memberId);
+        verify(memberRepository, times(1)).save(any(Member.class));
+    }
+
+    @Test
     @DisplayName("존재하지 않는 회원 정보 업데이트 실패 테스트")
     void updateMember_MemberNotFound_ThrowsException() {
         // given

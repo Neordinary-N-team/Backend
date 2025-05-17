@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import neordinary.backend.nteam.dto.DiaryResponseDto;
 import neordinary.backend.nteam.entity.Diary;
 import neordinary.backend.nteam.entity.Member;
+import neordinary.backend.nteam.global.apiPayload.code.status.ErrorStatus;
+import neordinary.backend.nteam.global.exception.handler.DiaryHandler;
+import neordinary.backend.nteam.global.exception.handler.MemberHandler;
 import neordinary.backend.nteam.repository.DiaryRepository;
 import neordinary.backend.nteam.repository.MemberRepository;
 import org.springframework.http.HttpStatus;
@@ -29,25 +32,29 @@ public class DiaryService {
     private final MemberRepository memberRepository;
     
     public List<DiaryResponseDto> getDiariesByPeriod(UUID memberId, LocalDate startDate, LocalDate endDate) {
+        if (memberId == null) {
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+
         if (startDate.isAfter(endDate)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "시작일이 종료일보다 늦을 수 없습니다.");
+            throw new DiaryHandler(ErrorStatus.START_DATE_AFTER_END_DATE);
         }
-        
+
         long monthsBetween = Period.between(startDate, endDate).toTotalMonths();
-        
+
         if (monthsBetween > MAX_PERIOD_MONTHS) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "최대 " + MAX_PERIOD_MONTHS + "개월까지만 조회 가능합니다.");
+            throw new DiaryHandler(ErrorStatus.PERIOD_TOO_LONG);
         }
-        
+
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."));
-        
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
-        
+
         List<Diary> diaries = diaryRepository.findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(
                 member, startDateTime, endDateTime);
-        
+
         return diaries.stream()
                 .map(this::mapToDiaryResponseDto)
                 .collect(Collectors.toList());
@@ -73,8 +80,7 @@ public class DiaryService {
                 .memberId(diary.getMember().getId())
                 .image(diary.getImage())
                 .ingredients(diary.getIngredients())
-                .satisfiedComment(diary.getSatisfiedComment())
-                .dissatisfiedComment(diary.getDissatisfiedComment())
+                .comment(diary.getComment())
                 .createdAt(diary.getCreatedAt())
                 .build();
     }

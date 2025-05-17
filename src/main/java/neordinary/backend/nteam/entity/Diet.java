@@ -2,10 +2,8 @@ package neordinary.backend.nteam.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import neordinary.backend.nteam.entity.enums.DietDifficulty;
 import neordinary.backend.nteam.entity.enums.MealType;
 
 import java.time.LocalDate;
@@ -39,11 +37,19 @@ public class Diet extends BaseEntity {
     @Column(name = "ingredients")
     private String ingredients;
 
+    @Setter
     @Column(name = "receipts")
-    private String receipts;
+    private String recipe;
 
     @Column(name = "nutrients")
     private String nutrients;
+
+    @Column(name = "calories")
+    private int calories;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "difficulty")
+    private DietDifficulty difficulty;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

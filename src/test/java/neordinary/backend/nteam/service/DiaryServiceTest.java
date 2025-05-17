@@ -3,6 +3,8 @@ package neordinary.backend.nteam.service;
 import neordinary.backend.nteam.dto.DiaryResponseDto;
 import neordinary.backend.nteam.entity.Diary;
 import neordinary.backend.nteam.entity.Member;
+import neordinary.backend.nteam.global.exception.handler.DiaryHandler;
+import neordinary.backend.nteam.global.exception.handler.MemberHandler;
 import neordinary.backend.nteam.repository.DiaryRepository;
 import neordinary.backend.nteam.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,8 +64,7 @@ public class DiaryServiceTest {
                 .member(member)
                 .image("image_data")
                 .ingredients("ingredients_data")
-                .satisfiedComment("satisfied_comment")
-                .dissatisfiedComment("dissatisfied_comment")
+                .comment("diary comment")
                 .build());
     }
 
@@ -95,7 +96,7 @@ public class DiaryServiceTest {
 
         // when, then
         assertThatThrownBy(() -> diaryService.getDiariesByPeriod(memberId, invalidStartDate, startDate))
-                .isInstanceOf(ResponseStatusException.class)
+                .isInstanceOf(DiaryHandler.class)
                 .hasMessageContaining("시작일이 종료일보다 늦을 수 없습니다");
     }
 
@@ -107,8 +108,8 @@ public class DiaryServiceTest {
 
         // when, then
         assertThatThrownBy(() -> diaryService.getDiariesByPeriod(memberId, startDate, farEndDate))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("최대 2개월까지만 조회 가능합니다");
+                .isInstanceOf(DiaryHandler.class)
+                .hasMessageContaining("기간 설정 기준을 초과하였습니다.");
     }
 
     @Test
@@ -119,8 +120,8 @@ public class DiaryServiceTest {
 
         // when, then
         assertThatThrownBy(() -> diaryService.getDiariesByPeriod(memberId, startDate, endDate))
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("회원을 찾을 수 없습니다");
+                .isInstanceOf(MemberHandler.class)
+                .hasMessageContaining("사용자가 없습니다.");
     }
 
     @Test
