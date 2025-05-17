@@ -24,7 +24,7 @@ import java.util.UUID;
 public class MemberController {
     private final MemberService memberService;
 
-    @Operation(summary = "회원 정보 저장", description = "회원 정보를 저장합니다.")
+    @Operation(summary = "회원 정보 저장", description = "비건 임산부의 식단을 위한 사용자의 기본 정보, 질병 유무, 임신 경험 여부, 입덧 여부, 섭취 가능한 음식, 섭취 불가능한 음식을 입력 받아 저장합니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "회원 정보 저장 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
@@ -36,7 +36,7 @@ public class MemberController {
         return ApiResponse.onCreated(response);
     }
 
-    @Operation(summary = "회원 정보 수정", description = "회원 정보를 수정합니다. ")
+    @Operation(summary = "회원 정보 수정", description = "회원 정보가 수정될 수 있는 경우(키 변화, 입덧 증세 변화, 섭취 가능한 음식 변화 등)를 대비해원하는 속성 값을 변경해 회원 정보를 수정합니다. 모든 값 수정 가능합니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "회원 정보 수정 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -48,7 +48,7 @@ public class MemberController {
         return ApiResponse.onSuccess(response);
     }
 
-    @Operation(summary = "회원 조회", description = "회원 정보를 조회합니다.")
+    @Operation(summary = "회원 정보 조회", description = "회원 정보 저장 api에서 저장한 정보들을 불러와 조회합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "회원 정보 조회 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "회원이 존재하지 않음")
@@ -62,7 +62,7 @@ public class MemberController {
         return ApiResponse.onSuccess(response);
     }
 
-    @Operation(summary = "멤버 레벨 업그레이드", description = "회원의 멤버 레벨을 업그레이드합니다.")
+    @Operation(summary = "멤버 레벨 업그레이드", description = "diary를 작성할 때마다 회원의 멤버 레벨(온도)을 업그레이드합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "멤버 레벨 업그레이드 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "회원이 존재하지 않음")
