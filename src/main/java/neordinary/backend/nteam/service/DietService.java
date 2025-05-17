@@ -9,6 +9,7 @@ import neordinary.backend.nteam.global.apiPayload.code.status.ErrorStatus;
 import neordinary.backend.nteam.global.exception.handler.DietHandler;
 import neordinary.backend.nteam.global.exception.handler.MemberHandler;
 import neordinary.backend.nteam.gpt.GPTApiClient;
+import neordinary.backend.nteam.gpt.PhotoApiClient;
 import neordinary.backend.nteam.gpt.openai.meal_plan.GPTResponseMealPlanDto;
 import neordinary.backend.nteam.gpt.openai.recipe.GPTResponseRecipeDto;
 import neordinary.backend.nteam.repository.DietRepository;
@@ -31,6 +32,7 @@ public class DietService {
     private final DietRepository dietRepository;
     private final MemberRepository memberRepository;
     private final GPTApiClient gptApiClient;
+    private final PhotoApiClient photoApiClient;
 
     @Transactional
     public UUID createDiet(UUID memberId) {
@@ -64,15 +66,23 @@ public class DietService {
         }
     }
 
+    @Transactional
     public List<DietResponseDto> getDietsByDate(UUID memberId, LocalDate date) {
         List<Diet> diets = dietRepository.findByMemberIdAndDate(memberId, date);
-        // TODO : get diets 하면 사진 없을 때 사진 생성 필요
+
+        for (Diet diet : diets) {
+            if (diet.getImage() == null || diet.getImage().isEmpty()) {
+                String imageUrl = photoApiClient.getPhotoUrl(diet.getName());
+                diet.setImage(imageUrl);
+            }
+        }
 
         return diets.stream()
                 .map(DietResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public DietDetailsResponseDto getDietsDetails(UUID memberId, Long dietId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
