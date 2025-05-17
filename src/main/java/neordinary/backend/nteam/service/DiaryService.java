@@ -1,12 +1,15 @@
 package neordinary.backend.nteam.service;
 
 import lombok.RequiredArgsConstructor;
+import neordinary.backend.nteam.dto.DiaryRequestDto;
 import neordinary.backend.nteam.dto.DiaryResponseDto;
 import neordinary.backend.nteam.entity.Diary;
 import neordinary.backend.nteam.entity.Member;
 import neordinary.backend.nteam.global.apiPayload.code.status.ErrorStatus;
 import neordinary.backend.nteam.global.exception.handler.DiaryHandler;
 import neordinary.backend.nteam.global.exception.handler.MemberHandler;
+import neordinary.backend.nteam.gpt.GPTApiClient;
+import neordinary.backend.nteam.gpt.openai.diary.GPTResponseDiaryCommentDto;
 import neordinary.backend.nteam.repository.DiaryRepository;
 import neordinary.backend.nteam.repository.MemberRepository;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,49 @@ public class DiaryService {
     
     private final DiaryRepository diaryRepository;
     private final MemberRepository memberRepository;
+    private final GPTApiClient gptApiClient;
+
+    public List<DiaryResponseDto> getDiariesByDate(UUID memberId, LocalDate date) {
+        List<Diary> diaries = diaryRepository.findByDiariesByMemberIdAndDate(
+                memberId, date);
+
+        return diaries.stream()
+                .map(this::mapToDiaryResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    public Long createDiary(UUID memberId, Diary diary) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        
+        diary.setMember(member);
+        Diary savedDiary = diaryRepository.save(diary);
+
+        return savedDiary.getId();
+    }
+
+    @Transactional
+    public DiaryResponseDto createDiary(DiaryRequestDto diaryRequest, String imageData) {
+        Member member = memberRepository.findById(diaryRequest.getMemberId())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        
+        Diary diary = Diary.builder()
+                .image(imageData)
+                .ingredients(diaryRequest.getIngredients())
+                .comment("") 
+                .mealType(diaryRequest.getType())
+                .member(member)
+                .build();
+        
+        Diary savedDiary = diaryRepository.save(diary);
+        
+        GPTResponseDiaryCommentDto commentDto = gptApiClient.generateDiaryComment(savedDiary);
+        savedDiary.setComment(commentDto.getComment());
+        
+        diaryRepository.save(savedDiary);
+        
+        return mapToDiaryResponseDto(savedDiary);
+    }
     
     public List<DiaryResponseDto> getDiariesByPeriod(UUID memberId, LocalDate startDate, LocalDate endDate) {
         if (memberId == null) {
@@ -77,10 +123,10 @@ public class DiaryService {
     private DiaryResponseDto mapToDiaryResponseDto(Diary diary) {
         return DiaryResponseDto.builder()
                 .id(diary.getId())
-                .memberId(diary.getMember().getId())
                 .image(diary.getImage())
                 .ingredients(diary.getIngredients())
                 .comment(diary.getComment())
+                .mealType(diary.getMealType())
                 .createdAt(diary.getCreatedAt())
                 .build();
     }

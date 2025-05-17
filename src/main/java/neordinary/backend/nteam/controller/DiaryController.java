@@ -3,9 +3,12 @@ package neordinary.backend.nteam.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import neordinary.backend.nteam.dto.DiaryRequestDto;
 import neordinary.backend.nteam.dto.DiaryResponseDto;
+import neordinary.backend.nteam.entity.enums.MealType;
 import neordinary.backend.nteam.global.apiPayload.ApiResponse;
 import neordinary.backend.nteam.global.exception.handler.DiaryHandler;
 import neordinary.backend.nteam.global.apiPayload.code.status.ErrorStatus;
@@ -45,25 +48,26 @@ public class DiaryController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<DiaryResponseDto> createDiary(
-            @RequestPart(value = "image") MultipartFile image,
-            @RequestParam(value = "memberId") @NotNull UUID memberId) {
+            @RequestPart(value = "image", required = true) 
+            @io.swagger.v3.oas.annotations.media.Schema(description = "식단 이미지")
+            MultipartFile image,
+            @RequestPart(value = "diaryRequest", required = true) 
+            @io.swagger.v3.oas.annotations.media.Schema(description = "일기 정보 (회원ID, 식사타입, 재료목록)")
+            @Valid DiaryRequestDto diaryRequest) {
 
         String contentType = image.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new DiaryHandler(ErrorStatus.BAD_IMAGE_FORMAT);
         }
 
-        String mockImageBase64 = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAyADIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL";
+        String imageData;
+        try {
+            imageData = convertImageToBase64(image);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 처리 중 오류가 발생했습니다", e);
+        }
 
-        DiaryResponseDto response = DiaryResponseDto.builder()
-                .id(1L)
-                .memberId(memberId)
-                .image(mockImageBase64)
-                .ingredients("당근, 양파, 토마토, 두부, 아보카도, 견과류")
-                .comment("두부와 견과류에서 양질의 단백질, 아보카도에서 불포화 지방산 충분히 섭취했습니다. 철분과 칼슘이 부족하니 녹색 채소와 두유를 추가하세요.")
-                .createdAt(LocalDateTime.now())
-                .build();
-
+        DiaryResponseDto response = diaryService.createDiary(diaryRequest, imageData);
         return ApiResponse.onSuccess(response);
     }
     
@@ -107,17 +111,6 @@ public class DiaryController {
         return ResponseEntity.noContent().build();
     }
     
-    private DiaryResponseDto createMockDiaryResponse(LocalDate date, UUID memberId) {
-        return DiaryResponseDto.builder()
-                .id(1L)
-                .memberId(memberId)
-                .image("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAyADIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIHMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL")
-                .ingredients("당근, 양파, 토마토, 두부, 아보카도, 견과류")
-                .comment("두부와 견과류에서 양질의 단백질, 아보카도에서 불포화 지방산 충분히 섭취했습니다. 철분과 칼슘이 부족하니 녹색 채소와 두유를 추가하세요.")
-                .createdAt(LocalDateTime.of(date.getYear(), date.getMonth(), date.getDayOfMonth(), 20, 30))
-                .build();
-    }
-
     private String saveImage(MultipartFile image) {
         try {
             String originalFilename = image.getOriginalFilename();
@@ -136,5 +129,12 @@ public class DiaryController {
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장에 실패했습니다", e);
         }
+    }
+
+    private String convertImageToBase64(MultipartFile image) throws IOException {
+        String contentType = image.getContentType();
+        byte[] imageBytes = image.getBytes();
+        String base64Image = java.util.Base64.getEncoder().encodeToString(imageBytes);
+        return "data:" + contentType + ";base64," + base64Image;
     }
 } 
