@@ -33,5 +33,7 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     @Query("SELECT d FROM Diary d WHERE d.member.id = :memberId AND DATE(d.createdAt) = :date")
     List<Diary> findAllByMemberIdAndCreatedDate(@Param("memberId") UUID memberId,
                                                 @Param("date") LocalDate date);
-
+            
+    @Query("SELECT d FROM Diary d WHERE d.member = :member AND FUNCTION('DATE', d.createdAt) = :date ORDER BY d.createdAt ASC")
+    List<Diary> findByMemberAndDate(Member member, LocalDate date);
 }
