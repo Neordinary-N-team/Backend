@@ -1,6 +1,7 @@
 package neordinary.backend.nteam.service;
 
 import lombok.RequiredArgsConstructor;
+import neordinary.backend.nteam.dto.DiaryCommentResponseDto;
 import neordinary.backend.nteam.dto.DiaryRequestDto;
 import neordinary.backend.nteam.dto.DiaryResponseDto;
 import neordinary.backend.nteam.entity.Diary;
@@ -104,4 +105,15 @@ public class DiaryService {
                 .createdAt(diary.getCreatedAt())
                 .build();
     }
-} 
+
+    public List<DiaryCommentResponseDto> getDiarysByDate(UUID memberId, LocalDate date) {
+        List<Diary> diaries = diaryRepository.findAllByMemberIdAndCreatedDate(memberId, date);
+
+        return diaries.stream()
+                .map(diary -> DiaryCommentResponseDto.builder()
+                        .mealType(diary.getMealType())
+                        .comment(diary.getComment())
+                        .build())
+                .toList();
+    }
+}
