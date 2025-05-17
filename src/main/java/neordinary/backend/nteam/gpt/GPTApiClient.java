@@ -13,7 +13,7 @@ public interface GPTApiClient {
     // Generates a meal plan based on the member's preferences and dietary restrictions.
     List<GPTResponseMealPlanDto> generateMealPlan(Member member);
 
-    GPTResponseRecipeDto generateRecipe(Member member, Diet diet);
+    List<String> generateRecipe(Member member, Diet diet);
 
     GPTResponseDiaryCommentDto generateDiaryComment(Diary diary);
 }

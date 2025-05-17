@@ -73,9 +73,6 @@ public class DietService {
     @Transactional
     public List<DietResponseDto> getDietsByDate(UUID memberId, LocalDate date) {
         // 회원 존재 확인
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-                
         List<Diet> diets = dietRepository.findByMemberIdAndDate(memberId, date);
 
         for (Diet diet : diets) {
@@ -99,8 +96,10 @@ public class DietService {
 
         // Recipe가 없을 경우 생성
         if (diet.getRecipe() == null) {
-            GPTResponseRecipeDto gptResponseRecipeDtos = gptApiClient.generateRecipe(member, diet);
-            diet.setRecipe(gptResponseRecipeDtos.getInstructions());
+            List<String> instructions = gptApiClient.generateRecipe(member, diet);
+            if (!instructions.isEmpty()) {
+                diet.setRecipe(String.join("\n", instructions));
+            }
         }
 
         return DietDetailsResponseDto.fromEntity(diet);

@@ -52,7 +52,7 @@ public class GPTApiClientImpl implements GPTApiClient {
     }
 
     @Override
-    public GPTResponseRecipeDto generateRecipe(Member member, Diet diet) {
+    public List<String> generateRecipe(Member member, Diet diet) {
         // 메시지 구성
         String customPrompt = String.format(PromptTemplate.RECIPE_TEMPLATE,
                 diet.getName(),
@@ -109,7 +109,7 @@ public class GPTApiClientImpl implements GPTApiClient {
         }
     }
 
-    private GPTResponseRecipeDto convertJsonToRecipeDto(String json) {
+    private List<String> convertJsonToRecipeDto(String json) {
         try {
             // snake_case를 camelCase로 자동 변환
             ObjectMapper objectMapper = new ObjectMapper();
