@@ -9,10 +9,8 @@ import neordinary.backend.nteam.global.exception.handler.DietHandler;
 import neordinary.backend.nteam.global.exception.handler.MemberHandler;
 import neordinary.backend.nteam.repository.DietRepository;
 import neordinary.backend.nteam.repository.MemberRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.Period;

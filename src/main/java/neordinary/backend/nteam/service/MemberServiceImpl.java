@@ -1,6 +1,5 @@
 package neordinary.backend.nteam.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import neordinary.backend.nteam.converter.MemberConverter;
 import neordinary.backend.nteam.dto.MemberRequestDto;

@@ -7,12 +7,10 @@ import lombok.RequiredArgsConstructor;
 import neordinary.backend.nteam.dto.MemberRequestDto;
 import neordinary.backend.nteam.dto.MemberResponseDto;
 import neordinary.backend.nteam.service.MemberService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import neordinary.backend.nteam.global.apiPayload.ApiResponse;
 
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @RestController
