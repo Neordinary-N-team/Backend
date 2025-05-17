@@ -42,6 +42,7 @@ public class DiaryController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "일기 생성 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<DiaryResponseDto> createDiary(
             @RequestPart(value = "image") MultipartFile image,
