@@ -33,7 +33,7 @@ public class Diet extends BaseEntity {
     private MealType mealType;
 
     @Schema(description = "Base64로 인코딩된 이미지 데이터")
-    @Column(name = "image")
+    @Column(name = "image", columnDefinition = "TEXT", length = 50000)
     private String image;
 
     @Column(name = "ingredients")
