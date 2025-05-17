@@ -1,5 +1,6 @@
 package neordinary.backend.nteam.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import neordinary.backend.nteam.entity.enums.MealType;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -22,7 +23,7 @@ public class Diet extends BaseEntity {
     private Long id;
 
     @Column(name = "date")
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Column(name = "name")
     private String name;
@@ -31,6 +32,7 @@ public class Diet extends BaseEntity {
     @Column(name = "meal_type")
     private MealType mealType;
 
+    @Schema(description = "Base64로 인코딩된 이미지 데이터")
     @Column(name = "image")
     private String image;
 
