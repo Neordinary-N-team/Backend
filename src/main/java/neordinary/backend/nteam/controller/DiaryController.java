@@ -152,28 +152,6 @@ public class DiaryController {
         return ApiResponse.onSuccess(diarys);
     }
 
-    // Helper methods (saveImage, convertImageToBase64) are not API endpoints, so they don't need Swagger annotations.
-    // These methods are internal implementation details of the 'createDiary' API.
-    private String saveImage(MultipartFile image) {
-        try {
-            String originalFilename = image.getOriginalFilename();
-            String extension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf(".")) : ".jpg";
-            String filename = UUID.randomUUID() + extension;
-
-            Path uploadPath = Path.of("uploads");
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            Path filePath = uploadPath.resolve(filename);
-            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-            return "/uploads/" + filename;
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장에 실패했습니다", e);
-        }
-    }
-
     private String convertImageToBase64(MultipartFile image) throws IOException {
         String contentType = image.getContentType();
         byte[] imageBytes = image.getBytes();
