@@ -55,7 +55,7 @@ class DietRepositoryTest {
                 .mealType(MealType.LUNCH)
                 .image("image_data")
                 .ingredients("퀴노아, 토마토, 오이, 올리브 오일")
-                .receipts("1. 퀴노아를 삶습니다. 2. 채소를 썰어 퀴노아와 함께 담습니다.")
+                .recipe("1. 퀴노아를 삶습니다. 2. 채소를 썰어 퀴노아와 함께 담습니다.")
                 .nutrients("단백질: 12g, 탄수화물: 35g, 지방: 15g")
                 .build();
 
@@ -100,35 +100,34 @@ class DietRepositoryTest {
     }
 
     @Test
-    @DisplayName("기간 내 회원 식단 조회 테스트")
-    void findByMemberAndDateBetweenOrderByDateAscMealTypeAsc_WithDiets_ReturnsDietList() {
+    @DisplayName("날짜별 회원 식단 조회 테스트")
+    void findByMemberIdAndDate_WithDiets_ReturnsDietList() {
         // given
-        LocalDate startDate = LocalDate.of(2024, 1, 1);
-        LocalDate endDate = LocalDate.of(2024, 1, 31);
+        LocalDate targetDate = LocalDate.of(2024, 1, 15);
         
-        // 1월 15일 식단들 (범위 내)
+        // 1월 15일 식단들
         Diet diet1 = Diet.builder()
                 .member(member)
-                .date(LocalDate.of(2024, 1, 15))
+                .date(targetDate)
                 .name("애플 베리 오트밀")
                 .mealType(MealType.BREAKFAST)
                 .build();
                 
         Diet diet2 = Diet.builder()
                 .member(member)
-                .date(LocalDate.of(2024, 1, 15))
+                .date(targetDate)
                 .name("퀴노아 샐러드")
                 .mealType(MealType.LUNCH)
                 .build();
                 
         Diet diet3 = Diet.builder()
                 .member(member)
-                .date(LocalDate.of(2024, 1, 15))
+                .date(targetDate)
                 .name("버섯 리소토")
                 .mealType(MealType.DINNER)
                 .build();
         
-        // 2월 5일 식단 (범위 밖)
+        // 2월 5일 식단 (다른 날짜)
         Diet diet4 = Diet.builder()
                 .member(member)
                 .date(LocalDate.of(2024, 2, 5))
@@ -142,14 +141,11 @@ class DietRepositoryTest {
         dietRepository.save(diet4);
 
         // when
-        List<Diet> diets = dietRepository.findByMemberAndDateBetweenOrderByDateAscMealTypeAsc(
-                member, startDate, endDate);
+        List<Diet> diets = dietRepository.findByMemberIdAndDate(member.getId(), targetDate);
 
         // then
         assertThat(diets).hasSize(3);
-        // MealType 순서대로 정렬되었는지 확인 (BREAKFAST, LUNCH, DINNER 순)
-        assertThat(diets.get(0).getMealType()).isEqualTo(MealType.BREAKFAST);
-        assertThat(diets.get(1).getMealType()).isEqualTo(MealType.LUNCH);
-        assertThat(diets.get(2).getMealType()).isEqualTo(MealType.DINNER);
+        assertThat(diets).extracting(Diet::getName)
+                .containsExactlyInAnyOrder("애플 베리 오트밀", "퀴노아 샐러드", "버섯 리소토");
     }
 } 

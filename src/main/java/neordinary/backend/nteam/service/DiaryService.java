@@ -80,8 +80,7 @@ public class DiaryService {
                 .memberId(diary.getMember().getId())
                 .image(diary.getImage())
                 .ingredients(diary.getIngredients())
-                .satisfiedComment(diary.getSatisfiedComment())
-                .dissatisfiedComment(diary.getDissatisfiedComment())
+                .comment(diary.getComment())
                 .createdAt(diary.getCreatedAt())
                 .build();
     }
