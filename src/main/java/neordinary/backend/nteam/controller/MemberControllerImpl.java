@@ -2,6 +2,9 @@ package neordinary.backend.nteam.controller;
 
 import neordinary.backend.nteam.dto.MemberDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -25,7 +28,7 @@ public class MemberControllerImpl implements MemberController {
     }
 
     @Override
-    public ResponseEntity<MemberDto.MemberResponse> updateMember(Long id, MemberDto.MemberUpdateRequest request) {
+    public ResponseEntity<MemberDto.MemberResponse> updateMember(@PathVariable Long id, @RequestBody MemberDto.MemberUpdateRequest request) {
         MemberDto.MemberResponse existing = members.get(id);
         if (existing == null) {
             return ResponseEntity.notFound().build();
@@ -37,11 +40,30 @@ public class MemberControllerImpl implements MemberController {
     }
 
     @Override
-    public ResponseEntity<MemberDto.MemberResponse> getMember(Long id) {
+    public ResponseEntity<MemberDto.MemberResponse> getMember(@PathVariable Long id) {
         MemberDto.MemberResponse member = members.get(id);
         if (member == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(member);
     }
+
+    @Override
+    @PostMapping("/{id}/vegan-level/upgrade")
+    public ResponseEntity<MemberDto.MemberResponse> upgradeVeganLevel(@PathVariable Long id) {
+        MemberDto.MemberResponse member = members.get(id);
+        if (member == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // 비건 레벨 업그레이드
+        // 지금은 에러 생겨서 주석 처리
+        //member.setVeganLevel(member.getVeganLevel().next());
+
+        members.put(id, member);
+
+        return ResponseEntity.ok(member);
+    }
+
+
 }

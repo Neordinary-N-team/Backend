@@ -16,4 +16,8 @@ public interface MemberController{
 
     @GetMapping("/{id}")
     ResponseEntity<MemberDto.MemberResponse> getMember(@PathVariable Long id);
+
+    @PostMapping("/{id}/vegan-level/upgrade")
+    ResponseEntity<MemberDto.MemberResponse> upgradeVeganLevel(@PathVariable Long id);
+
 }
