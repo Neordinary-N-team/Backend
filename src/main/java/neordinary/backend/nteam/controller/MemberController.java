@@ -1,6 +1,7 @@
 package neordinary.backend.nteam.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -53,7 +54,10 @@ public class MemberController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "회원이 존재하지 않음")
     })
     @GetMapping("/{id}")
-    public ApiResponse<?> getMember(@PathVariable UUID id) {
+    public ApiResponse<?> getMember(
+            @Parameter(name = "id", description = "회원 ID", example = "33510094-ff12-46ff-907c-8689f184d36d")
+            @PathVariable UUID id
+    )  {
         MemberResponseDto response = memberService.getMember(id);
         return ApiResponse.onSuccess(response);
     }

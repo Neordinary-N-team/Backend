@@ -20,6 +20,7 @@ public class DietResponseDto {
     private LocalDate date;
     private String name;
     private MealType mealType;
+    private String time;
     
     @Schema(description = "Base64로 인코딩된 이미지 데이터", example = "data:image/jpeg;base64,/9j/4AAQSkZ...")
     private String image;
@@ -36,6 +37,7 @@ public class DietResponseDto {
                 .image(diet.getImage())
                 .calories(diet.getCalories())
                 .difficulty(diet.getDifficulty())
+                .time("10분")
                 .build();
     }
 } 
