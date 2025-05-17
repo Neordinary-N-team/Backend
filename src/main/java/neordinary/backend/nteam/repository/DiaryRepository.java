@@ -4,6 +4,7 @@ import neordinary.backend.nteam.entity.Diary;
 import neordinary.backend.nteam.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -28,4 +29,9 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
     @Query("SELECT d FROM Diary d WHERE d.member.id = :memberId AND d.createdAt = :date")
     List<Diary> findByDiariesByMemberIdAndDate(UUID memberId, LocalDate date);
+
+    @Query("SELECT d FROM Diary d WHERE d.member.id = :memberId AND DATE(d.createdAt) = :date")
+    List<Diary> findAllByMemberIdAndCreatedDate(@Param("memberId") UUID memberId,
+                                                @Param("date") LocalDate date);
+
 }

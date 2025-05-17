@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import neordinary.backend.nteam.dto.DiaryCommentResponseDto;
 import neordinary.backend.nteam.dto.DiaryRequestDto;
 import neordinary.backend.nteam.dto.DiaryResponseDto;
-import neordinary.backend.nteam.entity.enums.MealType;
 import neordinary.backend.nteam.global.apiPayload.ApiResponse;
 import neordinary.backend.nteam.global.exception.handler.DiaryHandler;
 import neordinary.backend.nteam.global.apiPayload.code.status.ErrorStatus;
@@ -27,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -109,6 +108,20 @@ public class DiaryController {
         diaryService.deleteDiary(memberId, date);
         
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "선택된 날짜의 코멘트 조회", description = "회원 ID와 날짜로 해당 일의 아침/점심/저녁 코멘트를 조회합니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "코멘트 조회 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    @GetMapping("/by-date")
+    public ApiResponse<List<DiaryCommentResponseDto>> getDietByDate(
+            @RequestParam @NotNull UUID memberId,
+            @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        List<DiaryCommentResponseDto> diarys = diaryService.getDiarysByDate(memberId, date);
+        return ApiResponse.onSuccess(diarys);
     }
     
     private String saveImage(MultipartFile image) {
