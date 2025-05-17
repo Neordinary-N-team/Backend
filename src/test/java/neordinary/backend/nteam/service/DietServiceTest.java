@@ -79,7 +79,7 @@ public class DietServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.get(0).getName()).isEqualTo("퀴노아 샐러드");
-        assertThat(result.get(0).getMealType()).isEqualTo(MealType.LUNCH);
+        assertThat(result.get(0).getMealType()).isEqualTo("점심");
     }
 
     @Test

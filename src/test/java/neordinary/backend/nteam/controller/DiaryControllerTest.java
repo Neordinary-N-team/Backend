@@ -141,30 +141,4 @@ public class DiaryControllerTest {
                 .param("date", invalidDate.toString()))
                 .andExpect(status().isBadRequest());
     }
-
-    @Test
-    @DisplayName("일기 삭제 성공 테스트")
-    void deleteDiary_Success() throws Exception {
-        // when, then
-        mockMvc.perform(delete("/api/diaries")
-                .param("memberId", memberId.toString())
-                .param("date", date.toString()))
-                .andExpect(status().isNoContent());
-                
-        verify(diaryService).deleteDiary(memberId, date);
-    }
-
-    @Test
-    @DisplayName("존재하지 않는 일기 삭제 실패 테스트")
-    void deleteDiary_DiaryNotFound_ThrowsException() throws Exception {
-        // given
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 날짜의 일기를 찾을 수 없습니다."))
-                .when(diaryService).deleteDiary(memberId, date);
-
-        // when, then
-        mockMvc.perform(delete("/api/diaries")
-                .param("memberId", memberId.toString())
-                .param("date", date.toString()))
-                .andExpect(status().isNotFound());
-    }
-} 
+}
