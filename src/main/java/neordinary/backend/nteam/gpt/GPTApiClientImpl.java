@@ -51,7 +51,7 @@ public class GPTApiClientImpl implements GPTApiClient {
     }
 
     @Override
-    public List<GPTResponseRecipeDto> generateRecipe(Member member, Diet diet) {
+    public GPTResponseRecipeDto generateRecipe(Member member, Diet diet) {
         // 메시지 구성
         String customPrompt = String.format(PromptTemplate.RECIPE_TEMPLATE,
                 diet.getName(),
@@ -71,13 +71,27 @@ public class GPTApiClientImpl implements GPTApiClient {
 
         String json = askGPTAndGetResponseJson(messages);
 
-        return convertJsonToDto(json);
+        return convertJsonToRecipeDto(json);
     }
 
 
     // == GPT 요청을 위한 Method ==
 
-    private <T> List<T> convertJsonToDto(String json) {
+    private List<GPTResponseMealPlanDto> convertJsonToDto(String json) {
+        try {
+            // snake_case를 camelCase로 자동 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+
+            // JSON 배열을 List<GPTResponseMealPlanDto>로 변환
+            return objectMapper.readValue(json, new TypeReference<>() {});
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("JSON 변환 실패");
+        }
+    }
+
+    private GPTResponseRecipeDto convertJsonToRecipeDto(String json) {
         try {
             // snake_case를 camelCase로 자동 변환
             ObjectMapper objectMapper = new ObjectMapper();

@@ -64,9 +64,10 @@ public class DietController {
     })
     @GetMapping
     public ApiResponse<DietDetailsResponseDto> getDietDetails(
-            @RequestParam @NotNull(message = "회원 ID는 필수 입력 값입니다.") Long dietId
+            @RequestParam @NotNull(message = "회원 ID는 필수 입력 값입니다.") UUID memberId,
+            @RequestParam @NotNull(message = "식단 ID는 필수 입력 값입니다.") Long dietId
     ) {
-        DietDetailsResponseDto dietsDetails = dietService.getDietsDetails(dietId);
+        DietDetailsResponseDto dietsDetails = dietService.getDietsDetails(memberId, dietId);
         return ApiResponse.onSuccess(dietsDetails);
     }
     

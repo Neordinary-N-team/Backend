@@ -29,9 +29,9 @@ public class PromptTemplate {
                 "meal_name": "철분 강화 두부 스크램블",
                 "difficulty": "EASY",
                 "ingredients": [
-                  {"name": "두부", "alternative": "병아리콩"},
-                  {"name": "시금치", "alternative": "케일"},
-                  {"name": "강화 시리얼", "alternative": "통밀빵"}
+                  {"name": "두부", "amount": "1모"},
+                  {"name": "시금치", "amount": "300g"},
+                  {"name": "강화 시리얼", "amount": "200g"}
                 ],
                 "nutrients": [
                   {"name": "protein", "amount": "20g"},

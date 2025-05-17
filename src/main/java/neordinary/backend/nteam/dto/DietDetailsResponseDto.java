@@ -9,8 +9,6 @@ import neordinary.backend.nteam.entity.Diet;
 import neordinary.backend.nteam.entity.enums.DietDifficulty;
 import neordinary.backend.nteam.entity.enums.MealType;
 
-import java.time.LocalDate;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,7 +32,7 @@ public class DietDetailsResponseDto {
                 .id(diet.getId())
                 .name(diet.getName())
                 .nutrients(diet.getNutrients())
-                .receipts(diet.getReceipts())
+                .receipts(diet.getRecipe())
                 .ingredients(diet.getIngredients())
                 .mealType(diet.getMealType())
                 .image(diet.getImage())

@@ -2,10 +2,7 @@ package neordinary.backend.nteam.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import neordinary.backend.nteam.entity.enums.DietDifficulty;
 import neordinary.backend.nteam.entity.enums.MealType;
 
@@ -40,8 +37,9 @@ public class Diet extends BaseEntity {
     @Column(name = "ingredients")
     private String ingredients;
 
+    @Setter
     @Column(name = "receipts")
-    private String receipts;
+    private String recipe;
 
     @Column(name = "nutrients")
     private String nutrients;

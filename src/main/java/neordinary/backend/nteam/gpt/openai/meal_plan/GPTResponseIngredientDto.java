@@ -7,9 +7,9 @@ import lombok.ToString;
 @ToString
 public class GPTResponseIngredientDto {
     private String name;
-    private String alternative;
+    private String amount;
 
     public String toDtoString() {
-        return name + " (alternative ingredient) " + alternative;
+        return name + " " + amount;
     }
 }

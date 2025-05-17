@@ -10,6 +10,7 @@ import neordinary.backend.nteam.global.exception.handler.DietHandler;
 import neordinary.backend.nteam.global.exception.handler.MemberHandler;
 import neordinary.backend.nteam.gpt.GPTApiClient;
 import neordinary.backend.nteam.gpt.openai.meal_plan.GPTResponseMealPlanDto;
+import neordinary.backend.nteam.gpt.openai.recipe.GPTResponseRecipeDto;
 import neordinary.backend.nteam.repository.DietRepository;
 import neordinary.backend.nteam.repository.MemberRepository;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -73,10 +73,17 @@ public class DietService {
                 .collect(Collectors.toList());
     }
 
-    public DietDetailsResponseDto getDietsDetails(Long dietId) {
+    public DietDetailsResponseDto getDietsDetails(UUID memberId, Long dietId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Diet diet = dietRepository.findById(dietId)
                 .orElseThrow(() -> new DietHandler(ErrorStatus.DIET_NOT_FOUND));
-        // TODO : get recipe 하면 레시피 없을 때 레시피 생성 필요
+
+        // Recipe가 없을 경우 생성
+        if (diet.getRecipe() == null) {
+            GPTResponseRecipeDto gptResponseRecipeDtos = gptApiClient.generateRecipe(member, diet);
+            diet.setRecipe(gptResponseRecipeDtos.getInstructions());
+        }
 
         return DietDetailsResponseDto.fromEntity(diet);
     }
