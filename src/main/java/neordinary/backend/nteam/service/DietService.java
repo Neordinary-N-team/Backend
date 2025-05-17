@@ -101,6 +101,4 @@ public class DietService {
 
         return DietDetailsResponseDto.fromEntity(diet);
     }
-
-
 }
