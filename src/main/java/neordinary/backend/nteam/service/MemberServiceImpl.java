@@ -6,6 +6,8 @@ import neordinary.backend.nteam.converter.MemberConverter;
 import neordinary.backend.nteam.dto.MemberRequestDto;
 import neordinary.backend.nteam.dto.MemberResponseDto;
 import neordinary.backend.nteam.entity.Member;
+import neordinary.backend.nteam.global.apiPayload.code.status.ErrorStatus;
+import neordinary.backend.nteam.global.exception.handler.MemberHandler;
 import neordinary.backend.nteam.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,25 +23,35 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponseDto createMember(MemberRequestDto requestDto) {
-        Member member = MemberConverter.toEntity(requestDto);
-        Member saved = memberRepository.save(member);
-        return MemberConverter.toDto(saved);
+        try {
+            Member member = MemberConverter.toEntity(requestDto);
+            Member saved = memberRepository.save(member);
+            return MemberConverter.toDto(saved);
+        } catch (Exception e) {
+            throw new MemberHandler(ErrorStatus.CREATE_MEMBER_FAILED);
+        }
     }
 
     @Override
     public MemberResponseDto updateMember(UUID id, MemberRequestDto requestDto) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+            .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        member.updateFrom(requestDto);
-
-        return MemberConverter.toDto(member);
+        try {
+            member.updateFrom(requestDto);
+            Member updatedMember = memberRepository.save(member);  // 변경 후 저장 필수
+            return MemberConverter.toDto(updatedMember);
+        } catch (IllegalArgumentException e) {
+            throw new MemberHandler(ErrorStatus._BAD_REQUEST);  // BAD_REQUEST 같은 상태를 추가해도 좋고
+        } catch (Exception e) {
+            throw new MemberHandler(ErrorStatus._INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
     public MemberResponseDto getMember(UUID id) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         return MemberConverter.toDto(member);
     }
@@ -47,7 +59,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponseDto upgradeMemberLevel(UUID id) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Integer currentLevel = member.getMemberLevel();
         if (currentLevel == null) {
