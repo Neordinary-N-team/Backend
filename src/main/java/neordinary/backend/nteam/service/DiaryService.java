@@ -20,7 +20,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Period;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,16 +28,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class DiaryService {
-    private static final int MAX_PERIOD_MONTHS = 2;
-    
     private final DiaryRepository diaryRepository;
     private final MemberRepository memberRepository;
     private final GPTApiClient gptApiClient;
 
     public List<DiaryResponseDto> getDiariesByDate(UUID memberId, LocalDate date) {
-        List<Diary> diaries = diaryRepository.findByDiariesByMemberIdAndDate(
-                memberId, date);
-
+        if (memberId == null) {
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+        
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        
+        List<Diary> diaries = diaryRepository.findByMemberAndDate(member, date);
+        
         return diaries.stream()
                 .map(this::mapToDiaryResponseDto)
                 .collect(Collectors.toList());
@@ -75,35 +78,6 @@ public class DiaryService {
         diaryRepository.save(savedDiary);
         
         return mapToDiaryResponseDto(savedDiary);
-    }
-    
-    public List<DiaryResponseDto> getDiariesByPeriod(UUID memberId, LocalDate startDate, LocalDate endDate) {
-        if (memberId == null) {
-            throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
-        }
-
-        if (startDate.isAfter(endDate)) {
-            throw new DiaryHandler(ErrorStatus.START_DATE_AFTER_END_DATE);
-        }
-
-        long monthsBetween = Period.between(startDate, endDate).toTotalMonths();
-
-        if (monthsBetween > MAX_PERIOD_MONTHS) {
-            throw new DiaryHandler(ErrorStatus.PERIOD_TOO_LONG);
-        }
-
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        LocalDateTime startDateTime = startDate.atStartOfDay();
-        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
-
-        List<Diary> diaries = diaryRepository.findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(
-                member, startDateTime, endDateTime);
-
-        return diaries.stream()
-                .map(this::mapToDiaryResponseDto)
-                .collect(Collectors.toList());
     }
     
     @Transactional

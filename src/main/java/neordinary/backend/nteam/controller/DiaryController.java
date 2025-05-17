@@ -37,7 +37,6 @@ import java.util.UUID;
 @Validated
 @Tag(name = "Diary API", description = "일기 관련 API")
 public class DiaryController {
-    private static final int MAX_PERIOD_MONTHS = 2;
     private final DiaryService diaryService;
 
     @Operation(summary = "일기 생성")
@@ -71,20 +70,18 @@ public class DiaryController {
         return ApiResponse.onSuccess(response);
     }
     
-    @GetMapping
-    @Operation(summary = "기간별 일기 조회", description = "지정된 기간 내의 모든 일기를 조회합니다. 최대 2개월까지 조회 가능합니다.")
+    @GetMapping("/daily")
+    @Operation(summary = "특정 날짜의 일기 조회", description = "특정 날짜에 해당하는 모든 일기를 조회합니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "일기 조회 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
-    public ResponseEntity<List<DiaryResponseDto>> getDiariesByPeriod(
+    public ApiResponse<List<DiaryResponseDto>> getDiariesByDate(
             @RequestParam @NotNull(message = "회원 ID는 필수 입력 값입니다.") UUID memberId,
-            @RequestParam @NotNull(message = "시작일은 필수 입력 값입니다.") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @NotNull(message = "종료일은 필수 입력 값입니다.") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+            @RequestParam @NotNull(message = "날짜는 필수 입력 값입니다.") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
-        List<DiaryResponseDto> responseDtos = diaryService.getDiariesByPeriod(memberId, startDate, endDate);
-        
-        return ResponseEntity.ok(responseDtos);
+        List<DiaryResponseDto> responseDtos = diaryService.getDiariesByDate(memberId, date);
+        return ApiResponse.onSuccess(responseDtos);
     }
     
     @DeleteMapping

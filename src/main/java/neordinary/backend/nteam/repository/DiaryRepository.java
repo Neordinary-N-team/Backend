@@ -25,7 +25,7 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
             Member member, 
             LocalDateTime startOfDay, 
             LocalDateTime endOfDay);
-
-    @Query("SELECT d FROM Diary d WHERE d.member.id = :memberId AND d.createdAt = :date")
-    List<Diary> findByDiariesByMemberIdAndDate(UUID memberId, LocalDate date);
+            
+    @Query("SELECT d FROM Diary d WHERE d.member = :member AND FUNCTION('DATE', d.createdAt) = :date ORDER BY d.createdAt ASC")
+    List<Diary> findByMemberAndDate(Member member, LocalDate date);
 }
