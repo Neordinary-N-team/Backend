@@ -25,8 +25,8 @@ public class ApiResponse<T> {
         return new ApiResponse<>(true, SuccessStatus._OK.getCode() , SuccessStatus._OK.getMessage(), result);
     }
 
-    public static <T> ApiResponse<T> onSuccess() {
-        return new ApiResponse<>(true, SuccessStatus._OK.getCode(), SuccessStatus._OK.getMessage(), null);
+    public static <T> ApiResponse<T> onSuccess(String code, String message, T result) {
+        return new ApiResponse<>(true, code, message, result);
     }
 
     // 실패한 경우 응답 생성
