@@ -1,12 +1,14 @@
 package neordinary.backend.nteam.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import neordinary.backend.nteam.dto.DiaryResponseDto;
+import neordinary.backend.nteam.global.apiPayload.ApiResponse;
+import neordinary.backend.nteam.global.exception.handler.DiaryHandler;
+import neordinary.backend.nteam.global.apiPayload.code.status.ErrorStatus;
 import neordinary.backend.nteam.service.DiaryService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -23,10 +25,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,20 +36,21 @@ import java.util.UUID;
 public class DiaryController {
     private static final int MAX_PERIOD_MONTHS = 2;
     private final DiaryService diaryService;
-    
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+
     @Operation(summary = "일기 생성")
-    @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "일기 생성 성공"),
-        @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "일기 생성 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
-    public ResponseEntity<DiaryResponseDto> createDiary(
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<DiaryResponseDto> createDiary(
             @RequestPart(value = "image") MultipartFile image,
             @RequestParam(value = "memberId") @NotNull UUID memberId) {
-            
+
         String contentType = image.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미지 파일만 업로드 가능합니다");
+            throw new DiaryHandler(ErrorStatus.BAD_IMAGE_FORMAT);
         }
 
         String mockImageBase64 = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAyADIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL";
@@ -66,24 +65,20 @@ public class DiaryController {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ApiResponse.onSuccess(response);
     }
     
     @GetMapping
     @Operation(summary = "기간별 일기 조회", description = "지정된 기간 내의 모든 일기를 조회합니다. 최대 2개월까지 조회 가능합니다.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "일기 조회 성공"),
-        @ApiResponse(responseCode = "400", description = "잘못된 요청")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "일기 조회 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
     public ResponseEntity<List<DiaryResponseDto>> getDiariesByPeriod(
             @RequestParam @NotNull(message = "회원 ID는 필수 입력 값입니다.") UUID memberId,
             @RequestParam @NotNull(message = "시작일은 필수 입력 값입니다.") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @NotNull(message = "종료일은 필수 입력 값입니다.") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        if (memberId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원 ID는 필수 입력 값입니다.");
-        }
-        
         List<DiaryResponseDto> responseDtos = diaryService.getDiariesByPeriod(memberId, startDate, endDate);
         
         return ResponseEntity.ok(responseDtos);
@@ -92,9 +87,9 @@ public class DiaryController {
     @DeleteMapping
     @Operation(summary = "일기 삭제", description = "특정 회원의 특정 날짜 일기를 삭제합니다.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "일기 삭제 성공"),
-        @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-        @ApiResponse(responseCode = "404", description = "일기를 찾을 수 없음")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "204", description = "일기 삭제 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "일기를 찾을 수 없음")
     })
     public ResponseEntity<Void> deleteDiary(
             @RequestParam @NotNull(message = "회원 ID는 필수 입력 값입니다.") UUID memberId,
