@@ -34,7 +34,6 @@ public class MemberConverter {
                 .hasMorningSickness(member.getHasMorningSickness())
                 .allowedVeganFoods(member.getAllowedVeganFoods())
                 .bannedVegetables(member.getBannedVegetables())
-                .bannedVegetables(member.getBannedVegetables())
                 .memberLevel(member.getMemberLevel())
                 .build();
     }

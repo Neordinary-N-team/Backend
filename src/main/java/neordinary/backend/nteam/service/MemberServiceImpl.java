@@ -38,10 +38,10 @@ public class MemberServiceImpl implements MemberService {
 
         try {
             member.updateFrom(requestDto);
-            Member updatedMember = memberRepository.save(member);  // 변경 후 저장 필수
+            Member updatedMember = memberRepository.save(member);
             return MemberConverter.toDto(updatedMember);
         } catch (IllegalArgumentException e) {
-            throw new MemberHandler(ErrorStatus._BAD_REQUEST);  // BAD_REQUEST 같은 상태를 추가해도 좋고
+            throw new MemberHandler(ErrorStatus._BAD_REQUEST);
         } catch (Exception e) {
             throw new MemberHandler(ErrorStatus._INTERNAL_SERVER_ERROR);
         }
@@ -65,7 +65,8 @@ public class MemberServiceImpl implements MemberService {
             currentLevel = 35;
         }
         member.setMemberLevel(currentLevel + 1);
+        Member savedMember = memberRepository.save(member);
 
-        return MemberConverter.toDto(member);
+        return MemberConverter.toDto(savedMember);
     }
 }
