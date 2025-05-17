@@ -1,11 +1,10 @@
 package neordinary.backend.nteam.service;
 
-import jakarta.persistence.EntityNotFoundException;
-import neordinary.backend.nteam.converter.MemberConverter;
 import neordinary.backend.nteam.dto.MemberRequestDto;
 import neordinary.backend.nteam.dto.MemberResponseDto;
 import neordinary.backend.nteam.entity.Member;
 import neordinary.backend.nteam.entity.enums.VeganLevel;
+import neordinary.backend.nteam.global.exception.handler.MemberHandler;
 import neordinary.backend.nteam.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -133,8 +132,8 @@ public class MemberServiceImplTest {
 
         // when, then
         assertThatThrownBy(() -> memberService.updateMember(memberId, memberRequestDto))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("회원을 찾을 수 없습니다");
+                .isInstanceOf(MemberHandler.class)
+                .hasMessageContaining("사용자가 없습니다");
     }
 
     @Test
@@ -160,8 +159,8 @@ public class MemberServiceImplTest {
 
         // when, then
         assertThatThrownBy(() -> memberService.getMember(memberId))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("회원을 찾을 수 없습니다");
+                .isInstanceOf(MemberHandler.class)
+                .hasMessageContaining("사용자가 없습니다");
     }
 
     @Test
@@ -187,8 +186,8 @@ public class MemberServiceImplTest {
 
         // when, then
         assertThatThrownBy(() -> memberService.upgradeMemberLevel(memberId))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("회원을 찾을 수 없습니다");
+                .isInstanceOf(MemberHandler.class)
+                .hasMessageContaining("사용자가 없습니다");
     }
 
     @Test

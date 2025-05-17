@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import neordinary.backend.nteam.dto.DietRequestDto;
 import neordinary.backend.nteam.dto.DietResponseDto;
 import neordinary.backend.nteam.entity.enums.MealType;
+import neordinary.backend.nteam.global.apiPayload.code.status.ErrorStatus;
+import neordinary.backend.nteam.global.exception.handler.DietHandler;
 import neordinary.backend.nteam.service.DietService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,11 +14,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -117,7 +117,7 @@ public class DietControllerTest {
         LocalDate endDate = LocalDate.of(2024, 1, 31);
         
         given(dietService.getDietsByPeriod(memberId, startDate, endDate))
-                .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "시작일이 종료일보다 늦을 수 없습니다."));
+                .willThrow(new DietHandler(ErrorStatus.START_DATE_AFTER_END_DATE));
 
         // when, then
         mockMvc.perform(get("/api/diets")
@@ -135,7 +135,7 @@ public class DietControllerTest {
         LocalDate endDate = LocalDate.of(2024, 4, 1);
         
         given(dietService.getDietsByPeriod(memberId, startDate, endDate))
-                .willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "최대 2개월까지만 조회 가능합니다."));
+                .willThrow(new DietHandler(ErrorStatus.PERIOD_TOO_LONG));
 
         // when, then
         mockMvc.perform(get("/api/diets")

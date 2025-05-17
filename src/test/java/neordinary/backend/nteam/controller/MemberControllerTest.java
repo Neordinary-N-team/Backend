@@ -2,9 +2,10 @@ package neordinary.backend.nteam.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import jakarta.persistence.EntityNotFoundException;
 import neordinary.backend.nteam.dto.MemberRequestDto;
 import neordinary.backend.nteam.dto.MemberResponseDto;
+import neordinary.backend.nteam.global.apiPayload.code.status.ErrorStatus;
+import neordinary.backend.nteam.global.exception.handler.MemberHandler;
 import neordinary.backend.nteam.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -134,7 +135,7 @@ public class MemberControllerTest {
     void updateMember_MemberNotFound_ThrowsException() throws Exception {
         // given
         given(memberService.updateMember(any(UUID.class), any(MemberRequestDto.class)))
-                .willThrow(new EntityNotFoundException("회원을 찾을 수 없습니다."));
+                .willThrow(new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // when, then
         mockMvc.perform(patch("/api/members/{id}", memberId)
@@ -162,7 +163,7 @@ public class MemberControllerTest {
     @DisplayName("존재하지 않는 회원 조회 실패 테스트")
     void getMember_MemberNotFound_ThrowsException() throws Exception {
         // given
-        given(memberService.getMember(memberId)).willThrow(new EntityNotFoundException("회원을 찾을 수 없습니다."));
+        given(memberService.getMember(memberId)).willThrow(new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // when, then
         mockMvc.perform(get("/api/members/{id}", memberId))
@@ -202,7 +203,7 @@ public class MemberControllerTest {
     void upgradeMemberLevel_MemberNotFound_ThrowsException() throws Exception {
         // given
         given(memberService.upgradeMemberLevel(memberId))
-                .willThrow(new EntityNotFoundException("회원을 찾을 수 없습니다."));
+                .willThrow(new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // when, then
         mockMvc.perform(put("/api/members/{id}/member-level/upgrade", memberId))
