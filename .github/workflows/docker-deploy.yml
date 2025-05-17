@@ -51,9 +51,9 @@ jobs:
             docker stop hack-backend || true
             docker rm hack-backend || true
             docker run -d \
-            --name hack-backend \
-            -p 8080:8080 \
-            -e DB_URL=${{ secrets.DB_URL }} \
-            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
-            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            ${{ secrets.DOCKERHUB_USERNAME }}/hackaton:latest
+              --name hack-backend \
+              -p 8080:8080 \
+              -e "DB_URL=${{ secrets.DB_URL }}" \
+              -e "DB_USERNAME=${{ secrets.DB_USERNAME }}" \
+              -e "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+              ${{ secrets.DOCKERHUB_USERNAME }}/hackaton:latest
