@@ -78,10 +78,10 @@ public class DiaryControllerTest {
                 .param("memberId", memberId.toString())
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.memberId").value(memberId.toString()))
-                .andExpect(jsonPath("$.image").exists())
-                .andExpect(jsonPath("$.ingredients").exists());
+                .andExpect(jsonPath("$.result.id").exists())
+                .andExpect(jsonPath("$.result.memberId").value(memberId.toString()))
+                .andExpect(jsonPath("$.result.image").exists())
+                .andExpect(jsonPath("$.result.ingredients").exists());
     }
 
     @Test
