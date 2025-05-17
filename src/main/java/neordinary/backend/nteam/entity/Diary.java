@@ -20,7 +20,7 @@ public class Diary extends BaseEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "image")
+    @Column(name = "image", columnDefinition = "TEXT", length = 100000)
     private String image;
 
     @Column(name = "ingredients")
