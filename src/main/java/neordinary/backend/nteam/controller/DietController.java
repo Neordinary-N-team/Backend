@@ -1,8 +1,6 @@
 package neordinary.backend.nteam.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -12,22 +10,16 @@ import neordinary.backend.nteam.dto.DietRequestDto;
 import neordinary.backend.nteam.dto.DietResponseDto;
 import neordinary.backend.nteam.entity.Diet;
 import neordinary.backend.nteam.entity.enums.MealType;
+import neordinary.backend.nteam.global.apiPayload.ApiResponse;
 import neordinary.backend.nteam.service.DietService;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.time.Period;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/diets")
@@ -37,38 +29,40 @@ import java.util.stream.Collectors;
 public class DietController {
     private static final int MAX_PERIOD_MONTHS = 2;
     private final DietService dietService;
-    
-    @PostMapping
+
     @Operation(summary = "비건 식단 생성", description = "비건 식단을 생성합니다. LLM이 자동으로 처리합니다.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "비건 식단 생성 성공"),
-        @ApiResponse(responseCode = "400", description = "잘못된 요청")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "비건 식단 생성 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
-    public ResponseEntity<Void> createDiet(@Valid @RequestBody DietRequestDto requestDto) {
-        if (requestDto.getMemberId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원 ID는 필수 입력 값입니다.");
+    @PostMapping
+    public ApiResponse<?> createDiet(@Valid @RequestBody DietRequestDto requestDto) {
+        try {
+            if (requestDto.getMemberId() == null) {
+                throw new IllegalArgumentException("회원 ID는 필수 입력 값입니다.");
+            }
+            //createMockDiets(LocalDate.parse("2025-05-17"));
+            return ApiResponse.onSuccess(null);
+        } catch (IllegalArgumentException ex) {
+            return ApiResponse.onFailure("CREATE_DIET_FAILED", ex.getMessage(), null);
+        } catch (Exception ex) {
+            return ApiResponse.onFailure("INTERNAL_ERROR", "서버 내부 오류가 발생했습니다.", null);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-    
-    @GetMapping
+
     @Operation(summary = "기간별 비건 식단 조회", description = "지정된 기간 내의 모든 비건 식단을 조회합니다. 이미지는 Base64 인코딩 형식입니다. 최대 2개월까지 조회 가능합니다.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "비건 식단 조회 성공"),
-        @ApiResponse(responseCode = "400", description = "잘못된 요청")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "비건 식단 조회 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
-    public ResponseEntity<List<DietResponseDto>> getDietsByPeriod(
+    @GetMapping
+    public ApiResponse<List<DietResponseDto>> getDietsByPeriod(
             @RequestParam @NotNull(message = "회원 ID는 필수 입력 값입니다.") UUID memberId,
             @RequestParam @NotNull(message = "시작일은 필수 입력 값입니다.") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @NotNull(message = "종료일은 필수 입력 값입니다.") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        if (memberId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "회원 ID는 필수 입력 값입니다.");
-        }
-        
         List<DietResponseDto> responseDtos = dietService.getDietsByPeriod(memberId, startDate, endDate);
-        
-        return ResponseEntity.ok(responseDtos);
+        return ApiResponse.onSuccess(responseDtos);
     }
     
     private List<Diet> createMockDiets(LocalDate date) {
