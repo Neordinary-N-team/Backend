@@ -3,6 +3,8 @@ package neordinary.backend.nteam.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.executable.ValidateOnExecution;
 import lombok.RequiredArgsConstructor;
 import neordinary.backend.nteam.dto.MemberRequestDto;
 import neordinary.backend.nteam.dto.MemberResponseDto;
@@ -27,7 +29,7 @@ public class MemberController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
     @PostMapping("")
-    public ApiResponse<?> createMember(@RequestBody MemberRequestDto request) {
+    public ApiResponse<?> createMember(@Valid @RequestBody MemberRequestDto request) {
         MemberResponseDto response = memberService.createMember(request);
         return ApiResponse.onSuccess(response);
     }
@@ -39,7 +41,7 @@ public class MemberController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "회원을 찾을 수 없음")
     })
     @PatchMapping("/{id}")
-    public ApiResponse<?> updateMember(@PathVariable UUID id, @RequestBody MemberRequestDto requestDto) {
+    public ApiResponse<?> updateMember(@PathVariable UUID id, @Valid @RequestBody MemberRequestDto requestDto) {
         MemberResponseDto response = memberService.updateMember(id, requestDto);
         return ApiResponse.onSuccess(response);
     }
