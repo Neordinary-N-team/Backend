@@ -3,7 +3,6 @@ package neordinary.backend.nteam.repository;
 import neordinary.backend.nteam.config.TestConfig;
 import neordinary.backend.nteam.entity.Diary;
 import neordinary.backend.nteam.entity.Member;
-import neordinary.backend.nteam.entity.enums.VeganLevel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,8 +40,7 @@ class DiaryRepositoryTest {
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
-                .bmi(21.5f)
-                .veganLevel(VeganLevel.OVO)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
                 .memberLevel(1)
                 .build();
         member = memberRepository.save(member);

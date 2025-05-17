@@ -3,9 +3,11 @@ package neordinary.backend.nteam.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import neordinary.backend.nteam.entity.enums.MorningSickness;
 
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,30 +31,20 @@ public class MemberRequestDto {
     @Max(value = 300, message = "weight는 300 이하이어야 합니다.")
     private Integer weight;
 
-    @Schema(example = "21.5")
-    @NotNull(message = "bmi는 필수입니다.")
-    @Max(value = 50, message = "weight는 50 이하이어야 합니다.")
-    private Float bmi;
-
     @Schema(example = "고혈압")
     @Size(max = 50, message = "diseases는 최대 50자까지 입력 가능합니다.")
     private String diseases;
 
     @Schema(example = "true")
     @NotNull(message = "prePregnant는 필수입니다.")
-    private Boolean prePregnant;
+    private int prePregnant;
 
-    @Schema(example = "false")
+    @Schema(example = "NONE")
     @NotNull(message = "hasMorningSickness는 필수입니다.")
-    private Boolean hasMorningSickness;
+    private MorningSickness hasMorningSickness;
 
-    @Schema(example = "OVO")
-    @Size(max = 50, message = "veganLevel은 최대 50자까지 입력 가능합니다.")
-    private String veganLevel;
-
-    @Schema(example = "두부")
-    @Size(max = 50, message = "vegProteins는 최대 50자까지 입력 가능합니다.")
-    private String vegProteins;
+    @Schema(example = "과일,채소")
+    private List<String> allowedVeganFoods;
 
     @Schema(example = "오이")
     @Size(max = 50, message = "bannedVegetables는 최대 50자까지 입력 가능합니다.")

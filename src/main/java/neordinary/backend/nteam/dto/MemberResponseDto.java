@@ -1,8 +1,10 @@
 package neordinary.backend.nteam.dto;
 
 import lombok.*;
+import neordinary.backend.nteam.entity.enums.MorningSickness;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -15,12 +17,10 @@ public class MemberResponseDto {
     private LocalDate pregDate;
     private Integer height;
     private Integer weight;
-    private Float bmi;
     private String diseases;
-    private Boolean prePregnant;
-    private Boolean hasMorningSickness;
-    private String veganLevel;
-    private String vegProteins;
+    private int prePregnant;
+    private MorningSickness hasMorningSickness;
+    private List<String> allowedVeganFoods;
     private String bannedVegetables;
     private Integer memberLevel;
 }
