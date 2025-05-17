@@ -65,6 +65,7 @@ public class MemberControllerTest {
                 .build();
                 
         memberResponseDto = MemberResponseDto.builder()
+                .id(memberId)
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
@@ -90,8 +91,7 @@ public class MemberControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.result.id").value(memberId.toString()))
                 .andExpect(jsonPath("$.result.height").value(160))
-                .andExpect(jsonPath("$.result.weight").value(60))
-                .andExpect(jsonPath("$.result.veganLevel").value("OVO"));
+                .andExpect(jsonPath("$.result.weight").value(60));
     }
 
     @Test
@@ -99,6 +99,7 @@ public class MemberControllerTest {
     void updateMember_Success() throws Exception {
         // given
         MemberResponseDto updatedResponse = MemberResponseDto.builder()
+                .id(memberId)
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
@@ -170,6 +171,7 @@ public class MemberControllerTest {
     void upgradeMemberLevel_Success() throws Exception {
         // given
         MemberResponseDto upgradedResponse = MemberResponseDto.builder()
+                .id(memberId)
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)

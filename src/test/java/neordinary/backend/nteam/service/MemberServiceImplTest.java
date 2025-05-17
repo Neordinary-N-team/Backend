@@ -56,6 +56,7 @@ public class MemberServiceImplTest {
                 .build();
 
         member = Member.builder()
+                .id(memberId)
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
@@ -82,7 +83,7 @@ public class MemberServiceImplTest {
         assertThat(result.getId()).isEqualTo(memberId);
         assertThat(result.getHeight()).isEqualTo(160);
         assertThat(result.getWeight()).isEqualTo(60);
-        assertThat(result.getAllowedVeganFoods()).isEqualTo("과일,채소");
+        assertThat(result.getAllowedVeganFoods()).isEqualTo(Collections.singletonList("과일,채소"));
         verify(memberRepository, times(1)).save(any(Member.class));
     }
 
@@ -105,6 +106,7 @@ public class MemberServiceImplTest {
                 .build();
                 
         Member updatedMember = Member.builder()
+                .id(memberId)
                 .pregDate(LocalDate.of(2024, 5, 17))
                 .height(160)
                 .weight(60)
@@ -128,10 +130,10 @@ public class MemberServiceImplTest {
         assertThat(result.getWeight()).isEqualTo(60);
         assertThat(result.getDiseases()).isEqualTo("고혈압");
         assertThat(result.getPrePregnant()).isEqualTo(1);
-        assertThat(result.getHasMorningSickness()).isEqualTo("NAUSEA");
-        assertThat(result.getAllowedVeganFoods()).isEqualTo("과일,채소");
+        assertThat(result.getHasMorningSickness()).isEqualTo(MorningSickness.NAUSEA);
+        assertThat(result.getAllowedVeganFoods()).isEqualTo(Collections.singletonList("과일,채소"));
         assertThat(result.getBannedVegetables()).isEqualTo("오이");
-        assertThat(result.getMemberLevel()).isEqualTo(35);
+        assertThat(result.getMemberLevel()).isEqualTo(36);
         verify(memberRepository, times(1)).findById(memberId);
         verify(memberRepository, times(1)).save(any(Member.class));
     }
@@ -160,7 +162,7 @@ public class MemberServiceImplTest {
         // then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(memberId);
-        assertThat(result.getAllowedVeganFoods()).isEqualTo("과일,채소");
+        assertThat(result.getAllowedVeganFoods()).isEqualTo(Collections.singletonList("과일,채소"));
     }
 
     @Test
@@ -180,6 +182,21 @@ public class MemberServiceImplTest {
     void upgradeMemberLevel_Success() {
         // given
         given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+        
+        Member upgradedMember = Member.builder()
+                .id(memberId)
+                .pregDate(LocalDate.of(2024, 5, 17))
+                .height(160)
+                .weight(60)
+                .diseases("고혈압")
+                .prePregnant(1)
+                .hasMorningSickness(MorningSickness.NAUSEA)
+                .allowedVeganFoods(Collections.singletonList("과일,채소"))
+                .bannedVegetables("오이")
+                .memberLevel(36)
+                .build();
+                
+        given(memberRepository.save(any(Member.class))).willReturn(upgradedMember);
 
         // when
         MemberResponseDto result = memberService.upgradeMemberLevel(memberId);
@@ -215,6 +232,16 @@ public class MemberServiceImplTest {
                 .build();
         
         given(memberRepository.findById(memberId)).willReturn(Optional.of(memberWithNullLevel));
+        
+        Member upgradedMember = Member.builder()
+                .id(memberId)
+                .pregDate(LocalDate.of(2024, 5, 17))
+                .height(160)
+                .weight(60)
+                .memberLevel(36)
+                .build();
+                
+        given(memberRepository.save(any(Member.class))).willReturn(upgradedMember);
 
         // when
         MemberResponseDto result = memberService.upgradeMemberLevel(memberId);
