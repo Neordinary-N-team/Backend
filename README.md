@@ -1,4 +1,4 @@
-<h1 align="center" style="font-weight: bold;">비건 임산부를 위한 식단 관리 플랫폼 채온 🍀</h1>
+<h1 align="center" style="font-weight: bold;">비건 임산부를 위한 식단 관리 플랫폼, 채온 🍀</h1>
 <p align="center">
   <img align='center' src='https://github.com/user-attachments/assets/806c2802-3b4d-43b7-9337-00979a995001' width="800"/></img>
 
